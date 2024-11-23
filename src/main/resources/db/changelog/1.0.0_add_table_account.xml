@@ -18,6 +18,15 @@
             <column name="password" type="text">
                 <constraints nullable="false"/>
             </column>
+            <column name="avatar" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
             <column name="created_date" type="bigint">
                 <constraints nullable="false"/>
             </column>
