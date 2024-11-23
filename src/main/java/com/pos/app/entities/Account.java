@@ -41,6 +41,8 @@ public class Account implements UserDetails {
 
     @Column(name = "created_date")
     private Long createdDate;
+    @Column(name = "updated_date")
+    private Long updatedDate;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -89,6 +91,13 @@ public class Account implements UserDetails {
             this.id = UUID.randomUUID().toString();
         }
         this.createdDate = new Date().getTime();
+        this.updatedDate = new Date().getTime();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+
+        this.updatedDate = new Date().getTime();
     }
 
 }
