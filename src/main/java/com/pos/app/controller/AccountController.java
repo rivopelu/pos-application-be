@@ -5,7 +5,7 @@ import com.pos.app.model.request.RequestCreateAccount;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@BaseController("account")
+@BaseController("auth")
 public interface AccountController {
 
     @PostMapping("v1/new-account")
