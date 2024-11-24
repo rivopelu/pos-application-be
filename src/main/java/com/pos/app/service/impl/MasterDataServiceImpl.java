@@ -5,6 +5,7 @@ import com.pos.app.enums.ResponseEnum;
 import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateCategory;
+import com.pos.app.model.response.ResListCategory;
 import com.pos.app.repositories.CategoryRepository;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.MasterDataService;
@@ -45,6 +46,23 @@ public class MasterDataServiceImpl implements MasterDataService {
         try {
             categoryRepository.saveAll(categories);
             return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public List<ResListCategory> getAllCategories() {
+        List<ResListCategory> resListCategories = new ArrayList<>();
+        List<Category> categoryList = categoryRepository.findAllByClientIdOrderBySeqAsc(accountService.getCurrentClientIdOrNull());
+        for (Category category : categoryList) {
+            ResListCategory resListCategory = new ResListCategory();
+            resListCategory.setName(category.getName());
+            resListCategory.setId(category.getId());
+            resListCategories.add(resListCategory);
+        }
+        try {
+            return resListCategories;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

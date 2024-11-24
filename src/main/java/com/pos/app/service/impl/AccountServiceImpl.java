@@ -100,6 +100,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public String getCurrentClientIdOrNull() {
+
+        if (getCurrentAccount().getClient() == null) {
+            return  null;
+        }
+        return getCurrentAccount().getClient().getId();
+    }
+
+    @Override
     public ResponseGetMe getMeData() {
         try {
             Account account = getCurrentAccount();
