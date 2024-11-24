@@ -52,6 +52,10 @@ public class Account implements UserDetails {
     @Column(name = "role")
     private UserRole role;
 
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
