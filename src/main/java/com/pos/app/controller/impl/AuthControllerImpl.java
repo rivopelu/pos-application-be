@@ -37,6 +37,8 @@ public class AuthControllerImpl implements AuthController {
 
     @Override
     public String ping() {
-        return "PONG";
+        return "PENG";
     }
 }
+
+
