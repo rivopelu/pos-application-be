@@ -34,4 +34,9 @@ public class AuthControllerImpl implements AuthController {
     public BaseResponse signInSuperAdmin(RequestSignIn req) {
         return ResponseHelper.createBaseResponse(authService.signInSuperAdmin(req));
     }
+
+    @Override
+    public String ping() {
+        return "PONG";
+    }
 }
