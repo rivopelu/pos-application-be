@@ -43,6 +43,9 @@ public class Product {
     @Column(name = "updated_by")
     private String updatedBy;
 
+    @Column(name = "image")
+    private String image;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
