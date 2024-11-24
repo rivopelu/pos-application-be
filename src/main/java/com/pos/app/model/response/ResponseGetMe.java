@@ -1,10 +1,8 @@
-package com.pos.app.model.request;
-
+package com.pos.app.model.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.pos.app.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class RequestCreateAccount {
-    private String username;
+public class ResponseGetMe {
     private String name;
-    private String password;
-    private UserRole role;
+    private String username;
+    private String avatar;
 }
+
