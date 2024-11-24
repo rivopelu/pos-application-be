@@ -18,5 +18,8 @@ public class ResponseGetMe {
     private String name;
     private String username;
     private String avatar;
+    private String clientId;
+    private String clientName;
+    private String clientLogo;
 }
 

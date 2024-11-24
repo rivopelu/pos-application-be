@@ -35,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
         Client client = null;
         String passwordEncode = passwordEncoder.encode(req.getPassword());
         EnumSet<UserRole> allowedRoles = EnumSet.of(UserRole.STAFF, UserRole.ADMIN);
-        boolean checkUsername= accountRepository.existsAccountByUsername(req.getUsername());
+        boolean checkUsername = accountRepository.existsAccountByUsername(req.getUsername());
         if (checkUsername) {
             throw new BadRequestException(ResponseEnum.ACCOUNT_ALREADY_EXIST.name());
         }
@@ -95,11 +95,20 @@ public class AccountServiceImpl implements AccountService {
     public ResponseGetMe getMeData() {
         try {
             Account account = getCurrentAccount();
-            return ResponseGetMe.builder()
+            ResponseGetMe responseGetMe = ResponseGetMe.builder()
                     .name(account.getName())
                     .username(account.getUsername())
                     .avatar(account.getAvatar())
                     .build();
+
+            ;
+            if (account.getClient() != null) {
+                Client client = account.getClient();
+                responseGetMe.setClientId(client.getId());
+                responseGetMe.setClientName(client.getName());
+                responseGetMe.setClientLogo(client.getLogo());
+            }
+            return responseGetMe;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
