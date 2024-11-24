@@ -6,5 +6,12 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <include file="classpath:db/changelog/1.0.0_add_table_account.xml"/>
+    <include file="classpath:db/changelog/1.1.0_add_table_client.xml"/>
+    <include file="classpath:db/changelog/1.1.1_add_table_category.xml"/>
+    <include file="classpath:db/changelog/1.1.2_fixing_seq_in_table_category.xml"/>
+    <include file="classpath:db/changelog/1.2.0_add_table_product.xml"/>
+    <include file="classpath:db/changelog/1.2.1_add_column_image_product.xml"/>
+    <include file="classpath:db/changelog/1.2.2_add_column_created_by.xml"/>
+    <include file="classpath:db/changelog/1.2.3_fix_fk.xml"/>
 
 </databaseChangeLog>

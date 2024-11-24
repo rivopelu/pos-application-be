@@ -4,7 +4,6 @@ package com.pos.app.model.request;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.pos.app.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,10 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class RequestCreateAccount {
+public class RequestSignIn {
     private String username;
-    private String name;
     private String password;
-    private UserRole role;
-    private String clientId;
 }
