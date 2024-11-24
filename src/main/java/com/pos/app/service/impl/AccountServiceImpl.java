@@ -92,6 +92,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public String getCurrentClientId() {
+        if (getCurrentAccount().getClient() == null) {
+            throw new BadRequestException(ResponseEnum.CLIENT_NOT_FOUND.name());
+        }
+        return getCurrentAccount().getClient().getId();
+    }
+
+    @Override
     public ResponseGetMe getMeData() {
         try {
             Account account = getCurrentAccount();
@@ -101,7 +109,7 @@ public class AccountServiceImpl implements AccountService {
                     .avatar(account.getAvatar())
                     .build();
 
-            ;
+
             if (account.getClient() != null) {
                 Client client = account.getClient();
                 responseGetMe.setClientId(client.getId());

@@ -11,6 +11,6 @@ public interface AccountService {
     Account getCurrentAccount();
     Account getCurrentAccount(String id);
     String getCurrentAccountId();
-
+    String getCurrentClientId();
     ResponseGetMe getMeData();
 }
