@@ -1,13 +1,16 @@
 package com.pos.app.service.impl;
 
 import com.pos.app.entities.Account;
+import com.pos.app.entities.Client;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.enums.UserRole;
+import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.RequestCreateAccount;
 import com.pos.app.model.response.ResponseGetMe;
 import com.pos.app.repositories.AccountRepository;
+import com.pos.app.repositories.ClientRepository;
 import com.pos.app.service.AccountService;
 import com.pos.app.utils.AuthConstant;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumSet;
 import java.util.Optional;
 
 @Service
@@ -24,15 +28,35 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final HttpServletRequest httpServletRequest;
+    private final ClientRepository clientRepository;
 
     @Override
     public String createNewAccount(RequestCreateAccount req) {
+        Client client = null;
         String passwordEncode = passwordEncoder.encode(req.getPassword());
+        EnumSet<UserRole> allowedRoles = EnumSet.of(UserRole.STAFF, UserRole.ADMIN);
+        boolean checkUsername= accountRepository.existsAccountByUsername(req.getUsername());
+        if (checkUsername) {
+            throw new BadRequestException(ResponseEnum.ACCOUNT_ALREADY_EXIST.name());
+        }
+        if (allowedRoles.contains(req.getRole()) && req.getClientId() == null) {
+            throw new BadRequestException(ResponseEnum.CLIENT_REQUIRED.name());
+        }
+
+        if (req.getClientId() != null) {
+            Optional<Client> getClient = clientRepository.findById(req.getClientId());
+            if (getClient.isEmpty()) {
+                throw new BadRequestException(ResponseEnum.CLIENT_NOT_FOUND.name());
+            }
+            client = getClient.get();
+
+        }
         Account account = Account.builder()
                 .username(req.getUsername())
                 .name(req.getName())
                 .password(passwordEncode)
                 .role(req.getRole())
+                .client(client)
                 .avatar(createAvatar(req.getName()))
                 .createdBy(getCurrentAccountId() != null ? getCurrentAccountId() : "SYSTEM")
                 .build();
