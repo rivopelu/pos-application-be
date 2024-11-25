@@ -17,4 +17,7 @@ public interface MasterDataController {
 
     @GetMapping("v1/category/list")
     BaseResponse getAllCategories();
+
+    @GetMapping("v1/product/list-all")
+    BaseResponse getAllProducts();
 }

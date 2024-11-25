@@ -34,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
                 .name(req.getName())
                 .price(req.getPrice())
                 .category(category.get())
+                .description(req.getDescription())
                 .createdBy(accountService.getCurrentAccountId())
                 .clientId(accountService.getCurrentClientId())
                 .image(req.getImage())
