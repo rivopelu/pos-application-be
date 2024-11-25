@@ -25,4 +25,10 @@ public class MasterDataControllerImpl implements MasterDataController {
     public BaseResponse getAllCategories() {
         return ResponseHelper.createBaseResponse(masterDataService.getAllCategories());
     }
+
+    @Override
+    public BaseResponse getAllProducts() {
+
+        return ResponseHelper.createBaseResponse(masterDataService.getAllProduct());
+    }
 }
