@@ -24,4 +24,6 @@ public class ResListProduct {
     private BigInteger price;
     private String categoryName;
     private String categoryId;
+    private String createdBy;
+    private Long createdDate;
 }

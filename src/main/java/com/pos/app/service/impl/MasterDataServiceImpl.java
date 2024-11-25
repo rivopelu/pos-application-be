@@ -81,6 +81,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                     .name(product.getName())
                     .id(product.getId())
                     .price(product.getPrice())
+                    .createdBy(accountService.getCurrentAccount(product.getCreatedBy()).getName())
+                    .createdDate(product.getCreatedDate())
                     .image(product.getImage())
                     .description(product.getDescription())
                     .categoryName(product.getCategory().getName())
