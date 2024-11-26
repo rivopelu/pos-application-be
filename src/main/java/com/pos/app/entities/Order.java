@@ -1,6 +1,7 @@
 package com.pos.app.entities;
 
 
+import com.pos.app.enums.OrderStatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,10 @@ public class Order {
 
     @Column(name = "created_by")
     private String createdBy;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private OrderStatusEnum status;
 
     @PrePersist
     public void prePersist() {
