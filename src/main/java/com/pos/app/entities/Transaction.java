@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.UUID;
@@ -29,6 +30,9 @@ public class Transaction {
     @Column(name = "total_transaction")
     private BigInteger totalTransaction;
 
+    @Column(name = "sub_total")
+    private BigInteger subTotal;
+
     @Column(name = "created_date")
     private Long createdDate;
 
@@ -37,6 +41,9 @@ public class Transaction {
 
     @Column(name = "created_by")
     private String createdBy;
+
+    @Column(name = "tax_percentage")
+    private BigInteger taxPercentage;
 
 
     @PrePersist
