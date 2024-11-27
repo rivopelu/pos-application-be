@@ -21,9 +21,11 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ReqCreateOrder {
 
+    private Boolean isPayment;
     private String customerName;
     private BigInteger tax;
     private List<ListProductCreateOrder> products;
+
 
     @Data
     @NoArgsConstructor

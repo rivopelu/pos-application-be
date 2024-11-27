@@ -40,6 +40,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatusEnum status;
 
+    @Column(name = "is_payment")
+    private Boolean isPayment;
+
     @PrePersist
     public void prePersist() {
         if (this.id == null) {

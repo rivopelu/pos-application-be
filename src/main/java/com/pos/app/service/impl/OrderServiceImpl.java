@@ -59,6 +59,7 @@ public class OrderServiceImpl implements OrderService {
             Order orderBuild = Order.builder()
                     .customerName(req.getCustomerName())
                     .status(OrderStatusEnum.CREATED)
+                    .isPayment(req.getIsPayment())
                     .orderCode(String.valueOf(new Date().getTime()))
                     .createdBy(accountService.getCurrentAccountId())
                     .build();
@@ -67,7 +68,6 @@ public class OrderServiceImpl implements OrderService {
 
             for (Product product : existProduct) {
                 BigInteger qty = productQty.get(index);
-                System.out.println(productQty.get(index));
                 index++;
                 BigInteger total = product.getPrice().multiply(qty);
                 totalPrice = totalPrice.add(total);
