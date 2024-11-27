@@ -9,6 +9,7 @@ import com.pos.app.enums.ResponseEnum;
 import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateOrder;
+import com.pos.app.model.response.ResListOrder;
 import com.pos.app.repositories.OrderProductRepository;
 import com.pos.app.repositories.OrderRepository;
 import com.pos.app.repositories.ProductRepository;
@@ -17,10 +18,12 @@ import com.pos.app.service.AccountService;
 import com.pos.app.service.OrderService;
 import com.pos.app.utils.NumberHelper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -95,6 +98,54 @@ public class OrderServiceImpl implements OrderService {
 
             transactionRepository.save(transaction);
             return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public Page<ResListOrder> getOrderList(Pageable pageable) {
+        if (pageable.getSort().isUnsorted()) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "createdDate"));
+        }
+
+// Fetch paginated and sorted orders
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+
+        List<String> orderIds = orderPage.getContent().stream().map(Order::getId).toList();
+        Map<Order, List<Transaction>> transactionsByOrderId = transactionRepository.findAllByOrderId(orderIds)
+                .stream()
+                .collect(Collectors.groupingBy(Transaction::getOrder));
+        Map<Order, List<OrderProduct>> orderProductsByOrderId = orderProductRepository.findAllByOrderId(orderIds)
+                .stream()
+                .collect(Collectors.groupingBy(OrderProduct::getOrder));
+
+// Transform orders to response DTOs
+        List<ResListOrder> resListOrders = orderPage.getContent().stream().map(order -> {
+            // Get related transactions and products
+            List<Transaction> transactionList = transactionsByOrderId.getOrDefault(order.getId(), new ArrayList<>());
+            List<OrderProduct> orderProductList = orderProductsByOrderId.getOrDefault(order.getId(), new ArrayList<>());
+
+            BigInteger totalTransaction = transactionList.stream()
+                    .map(Transaction::getTotalTransaction)
+                    .reduce(BigInteger.ZERO, BigInteger::add);
+            BigInteger totalItems = orderProductList.stream()
+                    .map(OrderProduct::getQty)
+                    .reduce(BigInteger.ZERO, BigInteger::add);
+
+            // Build the response object
+            return ResListOrder.builder()
+                    .id(order.getId())
+                    .orderCode(order.getOrderCode())
+                    .orderStatus(order.getStatus())
+                    .customerName(order.getCustomerName())
+                    .isPayment(order.getIsPayment())
+                    .totalTransaction(totalTransaction)
+                    .totalItems(totalItems)
+                    .build();
+        }).toList();
+        try {
+            return new PageImpl<>(resListOrders, pageable, resListOrders.size());
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

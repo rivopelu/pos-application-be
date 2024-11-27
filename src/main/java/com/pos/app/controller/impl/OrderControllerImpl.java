@@ -7,6 +7,7 @@ import com.pos.app.model.response.BaseResponse;
 import com.pos.app.service.OrderService;
 import com.pos.app.utils.ResponseHelper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 @BaseControllerImpl
 @RequiredArgsConstructor
@@ -16,5 +17,10 @@ public class OrderControllerImpl implements OrderController {
     @Override
     public BaseResponse createOrder(ReqCreateOrder req) {
         return ResponseHelper.createBaseResponse(orderService.createOrder(req));
+    }
+
+    @Override
+    public BaseResponse getOrderList(Pageable pageable) {
+        return ResponseHelper.createBaseResponse(orderService.getOrderList(pageable));
     }
 }
