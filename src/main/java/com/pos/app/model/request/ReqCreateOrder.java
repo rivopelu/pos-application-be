@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Data
@@ -20,10 +21,8 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ReqCreateOrder {
 
-    private String orderId;
-    private OrderStatusEnum status;
     private String customerName;
-    private Integer tax;
+    private BigInteger tax;
     private List<ListProductCreateOrder> products;
 
     @Data
