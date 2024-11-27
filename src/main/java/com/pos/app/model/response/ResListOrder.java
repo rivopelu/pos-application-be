@@ -19,7 +19,7 @@ import java.math.BigInteger;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ResListOrder {
     private String id;
-    private String orderCode;
+    private BigInteger orderCode;
     private OrderStatusEnum orderStatus;
     private Boolean isPayment;
     private BigInteger totalTransaction;

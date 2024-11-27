@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.UUID;
 
@@ -22,10 +23,7 @@ public class Order {
     private String id;
 
     @Column(name = "order_code")
-    private String orderCode;
-
-    @Column(name = "customer_name")
-    private String customerName;
+    private BigInteger orderCode;
 
     @Column(name = "created_date")
     private Long createdDate;
@@ -42,6 +40,9 @@ public class Order {
 
     @Column(name = "is_payment")
     private Boolean isPayment;
+
+    @Column(name = "client_id")
+    private String clientId;
 
     @PrePersist
     public void prePersist() {

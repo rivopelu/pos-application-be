@@ -46,6 +46,10 @@ public class Transaction {
     private BigInteger taxPercentage;
 
 
+    @Column(name = "client_id")
+    private String clientId;
+
+
     @PrePersist
     public void prePersist() {
         if (this.id == null) {

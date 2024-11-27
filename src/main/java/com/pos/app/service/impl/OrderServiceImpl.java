@@ -18,6 +18,7 @@ import com.pos.app.repositories.TransactionRepository;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.OrderService;
 import com.pos.app.utils.NumberHelper;
+import com.pos.app.utils.UtilsHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseEnum createOrder(ReqCreateOrder req) {
         try {
-
+            String clientId = accountService.getCurrentClientId();
             int index = 0;
             List<ReqCreateOrder.ListProductCreateOrder> productList = req.getProducts();
             List<String> productIds = new ArrayList<>();
@@ -60,12 +61,12 @@ public class OrderServiceImpl implements OrderService {
                 throw new BadRequestException(ResponseEnum.PRODUCTS_NOT_FOUND.name());
             }
 
-
+            BigInteger getLatestCode = orderRepository.findLatestCode(clientId);
             Order orderBuild = Order.builder()
-                    .customerName(req.getCustomerName())
-                    .status(OrderStatusEnum.CREATED)
+                    .status(OrderStatusEnum.IN_PROGRESS)
                     .isPayment(req.getIsPayment())
-                    .orderCode(String.valueOf(new Date().getTime()))
+                    .orderCode(UtilsHelper.generateOrderCode(getLatestCode))
+                    .clientId(clientId)
                     .createdBy(accountService.getCurrentAccountId())
                     .build();
 
@@ -81,6 +82,7 @@ public class OrderServiceImpl implements OrderService {
                         .totalPrice(total)
                         .pricePerQty(product.getPrice())
                         .product(product)
+                        .clientId(clientId)
                         .order(orderSave)
                         .createdBy(accountService.getCurrentAccountId())
                         .build();
@@ -95,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
                     .subTotal(totalPrice)
                     .totalTransaction(percentage.add(totalPrice))
                     .taxPercentage(req.getTax())
+                    .clientId(clientId)
                     .createdBy(accountService.getCurrentAccountId())
                     .build();
 
@@ -122,7 +125,6 @@ public class OrderServiceImpl implements OrderService {
                     .orderStatus(order.getStatus())
                     .isPayment(order.getIsPayment())
                     .createdDate(order.getCreatedDate())
-                    .customerName(order.getCustomerName())
                     .totalItems(getListTotalItem(order.getId()))
                     .totalTransaction(getListTotalTransaction(order.getId()))
                     .build();
