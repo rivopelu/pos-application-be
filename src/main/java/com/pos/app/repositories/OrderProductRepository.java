@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface OrderProductRepository extends JpaRepository<OrderProduct, String> {
-    @Query("select op from OrderProduct as op where op.order.id in :orderIds")
-    List<OrderProduct> findAllByOrderId(List<String> orderIds);
+    List<OrderProduct> findAllByOrderId(String order_id);
 
 }

@@ -1,5 +1,6 @@
 package com.pos.app.service.impl;
 
+import com.pos.app.controller.OrderController;
 import com.pos.app.entities.Order;
 import com.pos.app.entities.OrderProduct;
 import com.pos.app.entities.Product;
@@ -22,8 +23,9 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -109,47 +111,45 @@ public class OrderServiceImpl implements OrderService {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "createdDate"));
         }
 
-// Fetch paginated and sorted orders
         Page<Order> orderPage = orderRepository.findAll(pageable);
+        List<ResListOrder> resListOrders = new ArrayList<>();
+        for (Order order : orderPage.getContent()) {
 
-        List<String> orderIds = orderPage.getContent().stream().map(Order::getId).toList();
-        Map<Order, List<Transaction>> transactionsByOrderId = transactionRepository.findAllByOrderId(orderIds)
-                .stream()
-                .collect(Collectors.groupingBy(Transaction::getOrder));
-        Map<Order, List<OrderProduct>> orderProductsByOrderId = orderProductRepository.findAllByOrderId(orderIds)
-                .stream()
-                .collect(Collectors.groupingBy(OrderProduct::getOrder));
 
-// Transform orders to response DTOs
-        List<ResListOrder> resListOrders = orderPage.getContent().stream().map(order -> {
-            // Get related transactions and products
-            List<Transaction> transactionList = transactionsByOrderId.getOrDefault(order.getId(), new ArrayList<>());
-            List<OrderProduct> orderProductList = orderProductsByOrderId.getOrDefault(order.getId(), new ArrayList<>());
-
-            BigInteger totalTransaction = transactionList.stream()
-                    .map(Transaction::getTotalTransaction)
-                    .reduce(BigInteger.ZERO, BigInteger::add);
-            BigInteger totalItems = orderProductList.stream()
-                    .map(OrderProduct::getQty)
-                    .reduce(BigInteger.ZERO, BigInteger::add);
-
-            // Build the response object
-            return ResListOrder.builder()
+            ResListOrder res = ResListOrder.builder()
                     .id(order.getId())
                     .orderCode(order.getOrderCode())
                     .orderStatus(order.getStatus())
-                    .customerName(order.getCustomerName())
                     .isPayment(order.getIsPayment())
-                    .totalTransaction(totalTransaction)
-                    .totalItems(totalItems)
                     .createdDate(order.getCreatedDate())
-                    .createdBy(accountService.getCurrentAccount(order.getCreatedBy()).getName())
+                    .customerName(order.getCustomerName())
+                    .totalItems(getListTotalItem(order.getId()))
+                    .totalTransaction(getListTotalTransaction(order.getId()))
                     .build();
-        }).toList();
+            resListOrders.add(res);
+        }
         try {
-            return new PageImpl<>(resListOrders, pageable, resListOrders.size());
+            return new PageImpl<>(resListOrders, orderPage.getPageable(), orderPage.getTotalPages());
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    private BigInteger getListTotalTransaction(String orderId) {
+        List<Transaction> transactionList = transactionRepository.findAllByOrderId(orderId);
+        BigInteger totalTransaction = BigInteger.ZERO;
+        for (Transaction transaction : transactionList) {
+            totalTransaction = totalTransaction.add(transaction.getTotalTransaction());
+        }
+        return totalTransaction;
+    }
+
+    private BigInteger getListTotalItem(String orderId) {
+        List<OrderProduct> orderProductList = orderProductRepository.findAllByOrderId(orderId);
+        BigInteger totalItems = BigInteger.ZERO;
+        for (OrderProduct orderProduct : orderProductList) {
+            totalItems = totalItems.add(orderProduct.getQty());
+        }
+        return totalItems;
     }
 }

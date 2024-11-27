@@ -8,6 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
-    @Query("select t from Transaction as t where t.order.id in :orderIds")
-    List<Transaction> findAllByOrderId(List<String> orderIds);
+    List<Transaction> findAllByOrderId(String order_id);
 }
