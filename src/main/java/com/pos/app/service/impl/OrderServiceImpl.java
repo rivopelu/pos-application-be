@@ -142,6 +142,8 @@ public class OrderServiceImpl implements OrderService {
                     .isPayment(order.getIsPayment())
                     .totalTransaction(totalTransaction)
                     .totalItems(totalItems)
+                    .createdDate(order.getCreatedDate())
+                    .createdBy(accountService.getCurrentAccount(order.getCreatedBy()).getName())
                     .build();
         }).toList();
         try {

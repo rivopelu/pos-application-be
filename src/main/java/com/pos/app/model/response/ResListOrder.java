@@ -25,5 +25,7 @@ public class ResListOrder {
     private BigInteger totalTransaction;
     private String customerName;
     private BigInteger totalItems;
+    private Long createdDate;
+    private String createdBy;
 
 }
