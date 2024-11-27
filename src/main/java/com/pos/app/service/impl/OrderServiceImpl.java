@@ -108,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<ResListOrder> getOrderList(Pageable pageable) {
         if (pageable.getSort().isUnsorted()) {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "createdDate"));
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdDate"));
         }
 
         Page<Order> orderPage = orderRepository.findAll(pageable);
