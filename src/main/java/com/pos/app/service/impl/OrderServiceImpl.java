@@ -89,11 +89,11 @@ public class OrderServiceImpl implements OrderService {
 
             orderProductRepository.saveAll(orderProductList);
 
-
+            BigInteger percentage = NumberHelper.getPercentageTotal(req.getTax(), totalPrice);
             Transaction transaction = Transaction.builder()
                     .order(orderSave)
                     .subTotal(totalPrice)
-                    .totalTransaction(NumberHelper.getPercentageTotal(req.getTax(), totalPrice))
+                    .totalTransaction(percentage.add(totalPrice))
                     .taxPercentage(req.getTax())
                     .createdBy(accountService.getCurrentAccountId())
                     .build();

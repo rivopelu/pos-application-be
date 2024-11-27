@@ -5,6 +5,7 @@ import java.math.BigInteger;
 public class NumberHelper {
 
     public static BigInteger getPercentageTotal(BigInteger percentage, BigInteger num) {
-        return percentage.multiply(num).divide(BigInteger.valueOf(100));
+        return num.multiply(percentage).divide(BigInteger.valueOf(100));
+
     }
 }
