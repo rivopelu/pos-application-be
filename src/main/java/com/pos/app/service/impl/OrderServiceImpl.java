@@ -8,6 +8,7 @@ import com.pos.app.entities.Transaction;
 import com.pos.app.enums.OrderStatusEnum;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.exception.BadRequestException;
+import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateOrder;
 import com.pos.app.model.response.ResListOrder;
@@ -27,6 +28,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductRepository orderProductRepository;
     private final TransactionRepository transactionRepository;
 
+    //    da0a8b4f-d84c-444d-b793-598bfa32730c
     @Override
     public ResponseEnum createOrder(ReqCreateOrder req) {
         try {
@@ -72,11 +75,18 @@ public class OrderServiceImpl implements OrderService {
 
             Order orderSave = orderRepository.saveAndFlush(orderBuild);
 
-            for (Product product : existProduct) {
+            for (ReqCreateOrder.ListProductCreateOrder productCreateOrder : productList) {
+                Optional<Product> findProduct = productRepository.findById(productCreateOrder.getProductId());
+                if (findProduct.isEmpty()) {
+                    throw new NotFoundException(ResponseEnum.PRODUCTS_NOT_FOUND.name());
+                }
+                Product product = findProduct.get();
                 BigInteger qty = productQty.get(index);
                 index++;
                 BigInteger total = product.getPrice().multiply(qty);
+
                 totalPrice = totalPrice.add(total);
+
                 OrderProduct orderProduct = OrderProduct.builder()
                         .qty(qty)
                         .totalPrice(total)
