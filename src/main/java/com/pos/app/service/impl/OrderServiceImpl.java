@@ -182,7 +182,7 @@ public class OrderServiceImpl implements OrderService {
         String clientId = accountService.getCurrentClientIdOrNull();
 
         List<ResListOrder> resListOrders = new ArrayList<>();
-        List<Order> orders = orderRepository.findAllByClientIdAndStatusOrderByUpdatedDateDesc(clientId, status);
+        List<Order> orders = orderRepository.findAllByClientIdAndStatusOrderByUpdatedDateAsc(clientId, status);
 
         for (Order order : orders) {
             resListOrders.add(buildOrderList(order));
