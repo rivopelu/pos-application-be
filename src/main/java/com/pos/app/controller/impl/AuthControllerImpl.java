@@ -16,6 +16,7 @@ import com.pos.app.service.AccountService;
 import com.pos.app.service.AuthService;
 import com.pos.app.utils.ResponseHelper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.Optional;
 
@@ -23,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthControllerImpl implements AuthController {
     private final AuthService authService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
 
     @Override
@@ -37,6 +39,9 @@ public class AuthControllerImpl implements AuthController {
 
     @Override
     public String ping() {
+
+        simpMessagingTemplate.convertAndSend("/topic/live/order/" + "607607bf-eb4a-4ab1-85cf-2fc8f09b4f03", 1222);
+        System.out.println("SUCCESS");
         return "PENG";
     }
 }
