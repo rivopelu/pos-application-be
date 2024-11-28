@@ -17,10 +17,12 @@ import com.pos.app.repositories.ProductRepository;
 import com.pos.app.repositories.TransactionRepository;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.OrderService;
+import com.pos.app.service.WebSocketService;
 import com.pos.app.utils.NumberHelper;
 import com.pos.app.utils.UtilsHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -37,8 +39,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final TransactionRepository transactionRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    //    da0a8b4f-d84c-444d-b793-598bfa32730c
     @Override
     public ResponseEnum createOrder(ReqCreateOrder req) {
         try {
@@ -138,6 +140,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseEnum readyToTakeOrder(String id) {
+
         Optional<Order> findOrder = orderRepository.findById(id);
         if (findOrder.isEmpty()) {
             throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
@@ -147,9 +150,11 @@ public class OrderServiceImpl implements OrderService {
             throw new BadRequestException(ResponseEnum.ORDER_COMPLETED.name());
         }
         order.setStatus(OrderStatusEnum.READY);
+
+
         try {
             orderRepository.save(order);
-
+            simpMessagingTemplate.convertAndSend("/topic/live/order/" + order.getClientId(), order.getOrderCode());
             return ResponseEnum.SUCCESS;
         } catch (Exception e) {
             throw new SystemErrorException(e);
@@ -174,15 +179,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<ResListOrder> getLiveOrderList(OrderStatusEnum status) {
-        List<ResListOrder> resListOrders = new ArrayList<>();
         String clientId = accountService.getCurrentClientIdOrNull();
-        List<Order> orders = orderRepository.findAllByClientIdAndStatus(clientId, status);
+
+        List<ResListOrder> resListOrders = new ArrayList<>();
+        List<Order> orders = orderRepository.findAllByClientIdAndStatusOrderByUpdatedDateDesc(clientId, status);
+
         for (Order order : orders) {
             resListOrders.add(buildOrderList(order));
         }
+
         try {
             return resListOrders;
-
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
