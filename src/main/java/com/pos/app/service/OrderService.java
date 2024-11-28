@@ -12,4 +12,6 @@ public interface OrderService {
     ResponseEnum createOrder(ReqCreateOrder req);
 
     Page<ResListOrder> getOrderList(Pageable pageable);
+
+    ResponseEnum readyToTakeOrder(String id);
 }

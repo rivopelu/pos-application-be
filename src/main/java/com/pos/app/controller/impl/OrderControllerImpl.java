@@ -23,4 +23,9 @@ public class OrderControllerImpl implements OrderController {
     public BaseResponse getOrderList(Pageable pageable) {
         return ResponseHelper.createBaseResponse(orderService.getOrderList(pageable));
     }
+
+    @Override
+    public BaseResponse readyToTakeOrder(String id) {
+        return ResponseHelper.createBaseResponse(orderService.readyToTakeOrder(id));
+    }
 }

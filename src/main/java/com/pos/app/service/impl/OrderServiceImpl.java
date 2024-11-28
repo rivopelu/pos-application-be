@@ -1,6 +1,5 @@
 package com.pos.app.service.impl;
 
-import com.pos.app.controller.OrderController;
 import com.pos.app.entities.Order;
 import com.pos.app.entities.OrderProduct;
 import com.pos.app.entities.Product;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -142,6 +140,26 @@ public class OrderServiceImpl implements OrderService {
         }
         try {
             return new PageImpl<>(resListOrders, orderPage.getPageable(), orderPage.getTotalPages());
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseEnum readyToTakeOrder(String id) {
+        Optional<Order> findOrder = orderRepository.findById(id);
+        if (findOrder.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
+        }
+        Order order = findOrder.get();
+        if (order.getStatus() != OrderStatusEnum.IN_PROGRESS) {
+            throw new BadRequestException(ResponseEnum.ORDER_COMPLETED.name());
+        }
+        order.setStatus(OrderStatusEnum.READY);
+        try {
+            orderRepository.save(order);
+
+            return ResponseEnum.SUCCESS;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

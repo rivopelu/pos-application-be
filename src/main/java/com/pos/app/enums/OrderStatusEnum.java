@@ -1,5 +1,5 @@
 package com.pos.app.enums;
 
 public enum OrderStatusEnum {
-    OPEN_BILL, COMPLETED, CREATED, IN_PROGRESS
+    COMPLETED, CREATED, IN_PROGRESS, READY
 }
