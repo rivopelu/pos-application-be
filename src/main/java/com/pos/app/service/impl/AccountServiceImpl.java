@@ -9,6 +9,7 @@ import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.RequestCreateAccount;
 import com.pos.app.model.response.ResponseGetMe;
+import com.pos.app.model.response.ResponseListAccount;
 import com.pos.app.model.response.ResponsePasswordCreateAccount;
 import com.pos.app.repositories.AccountRepository;
 import com.pos.app.repositories.ClientRepository;
@@ -17,10 +18,13 @@ import com.pos.app.utils.AuthConstant;
 import com.pos.app.utils.UtilsHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -167,5 +171,32 @@ public class AccountServiceImpl implements AccountService {
             throw new SystemErrorException(e);
         }
 
+    }
+
+    @Override
+    public Page<ResponseListAccount> listAccount(Pageable pageable) {
+        String clientId = getCurrentClientIdOrNull();
+        List<ResponseListAccount> responseListAccounts = new ArrayList<>();
+        if (pageable.getSort().isUnsorted()) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdDate"));
+        }
+
+        Page<Account> accountPage = accountRepository.findAllByClientId(clientId, pageable);
+        for (Account account : accountPage.getContent()) {
+            ResponseListAccount response = ResponseListAccount.builder()
+                    .name(account.getName())
+                    .username(account.getUsername())
+                    .avatar(account.getAvatar())
+                    .id(account.getId())
+                    .createdDate(account.getCreatedDate())
+                    .createdBy(getCurrentAccount(account.getCreatedBy()).getName())
+                    .build();
+            responseListAccounts.add(response);
+        }
+        try {
+            return new PageImpl<>(responseListAccounts, pageable, accountPage.getTotalElements());
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.pos.app.model.response.BaseResponse;
 import com.pos.app.service.AccountService;
 import com.pos.app.utils.ResponseHelper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 @BaseControllerImpl
 @AllArgsConstructor
@@ -27,5 +28,11 @@ public class AccountControllerImpl implements AccountController {
     @Override
     public BaseResponse getMe() {
         return ResponseHelper.createBaseResponse(accountService.getMeData());
+    }
+
+    @Override
+    public BaseResponse listAccounts(Pageable pageable) {
+
+        return  ResponseHelper.createBaseResponse(accountService.listAccount(pageable));
     }
 }
