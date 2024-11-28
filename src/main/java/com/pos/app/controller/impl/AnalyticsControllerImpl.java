@@ -14,6 +14,7 @@ public class AnalyticsControllerImpl implements AnalyticsController {
 
     @Override
     public BaseResponse getAnalyticsSummary() {
+
         return ResponseHelper.createBaseResponse(analyticsService.getAnalyticsSummary());
     }
 }

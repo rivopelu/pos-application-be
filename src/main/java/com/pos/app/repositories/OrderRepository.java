@@ -14,4 +14,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 
 
     List<Order> findAllByClientIdAndStatusOrderByUpdatedDateAsc(String clientId, OrderStatusEnum status);
+
+    BigInteger countByClientId(String clientId);
 }
