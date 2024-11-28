@@ -20,6 +20,11 @@ public class AccountControllerImpl implements AccountController {
     }
 
     @Override
+    public BaseResponse newAccountByAdmin(RequestCreateAccount req) {
+        return ResponseHelper.createBaseResponse(accountService.newAccountByAdmin(req));
+    }
+
+    @Override
     public BaseResponse getMe() {
         return ResponseHelper.createBaseResponse(accountService.getMeData());
     }

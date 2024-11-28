@@ -9,10 +9,12 @@ import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.RequestCreateAccount;
 import com.pos.app.model.response.ResponseGetMe;
+import com.pos.app.model.response.ResponsePasswordCreateAccount;
 import com.pos.app.repositories.AccountRepository;
 import com.pos.app.repositories.ClientRepository;
 import com.pos.app.service.AccountService;
 import com.pos.app.utils.AuthConstant;
+import com.pos.app.utils.UtilsHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -103,7 +105,7 @@ public class AccountServiceImpl implements AccountService {
     public String getCurrentClientIdOrNull() {
 
         if (getCurrentAccount().getClient() == null) {
-            return  null;
+            return null;
         }
         return getCurrentAccount().getClient().getId();
     }
@@ -129,5 +131,41 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    @Override
+    public ResponsePasswordCreateAccount newAccountByAdmin(RequestCreateAccount req) {
+        String passwordGenerated = UtilsHelper.generateRandomPassword();
+        String passwordEncode = passwordEncoder.encode(passwordGenerated);
+        boolean checkUsername = accountRepository.existsAccountByUsername(req.getUsername());
+        if (checkUsername) {
+            throw new BadRequestException(ResponseEnum.ACCOUNT_ALREADY_EXIST.name());
+        }
+
+
+        Optional<Client> getClient = clientRepository.findById(getCurrentClientId());
+        if (getClient.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.CLIENT_NOT_FOUND.name());
+        }
+        Client client = getClient.get();
+        try {
+
+            Account account = Account.builder()
+                    .username(req.getUsername())
+                    .name(req.getName())
+                    .password(passwordEncode)
+                    .role(req.getRole())
+                    .client(client)
+                    .avatar(createAvatar(req.getName()))
+                    .createdBy(getCurrentAccountId())
+                    .build();
+            accountRepository.save(account);
+            return ResponsePasswordCreateAccount.builder()
+                    .password(passwordGenerated)
+                    .build();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+
     }
 }

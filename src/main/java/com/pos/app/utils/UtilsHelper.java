@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Random;
 
 public class UtilsHelper {
     private static LocalDate lastResetDate = getCurrentDateInJakarta();
@@ -21,7 +22,22 @@ public class UtilsHelper {
         return latestCode.add(BigInteger.ONE);
     }
 
+    public static String generateRandomPassword() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        int passwordLength = 8;
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < passwordLength; i++) {
+            int randomIndex = random.nextInt(characters.length());
+            password.append(characters.charAt(randomIndex));
+        }
+
+        return password.toString();
+    }
+
     private static LocalDate getCurrentDateInJakarta() {
         return ZonedDateTime.now(ZoneId.of("Asia/Jakarta")).toLocalDate();
     }
+
 }
