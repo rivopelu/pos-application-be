@@ -14,4 +14,6 @@ public interface OrderService {
     Page<ResListOrder> getOrderList(Pageable pageable);
 
     ResponseEnum readyToTakeOrder(String id);
+
+    ResponseEnum completeOrder(String id);
 }

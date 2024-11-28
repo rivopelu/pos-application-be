@@ -28,4 +28,9 @@ public class OrderControllerImpl implements OrderController {
     public BaseResponse readyToTakeOrder(String id) {
         return ResponseHelper.createBaseResponse(orderService.readyToTakeOrder(id));
     }
+
+    @Override
+    public BaseResponse completeOrder(String id) {
+        return ResponseHelper.createBaseResponse(orderService.completeOrder(id));
+    }
 }

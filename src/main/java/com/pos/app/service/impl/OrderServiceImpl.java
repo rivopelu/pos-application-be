@@ -165,6 +165,22 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public ResponseEnum completeOrder(String id) {
+        Optional<Order> findOrder = orderRepository.findById(id);
+        if (findOrder.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
+        }
+        Order order = findOrder.get();
+        order.setStatus(OrderStatusEnum.COMPLETED);
+        try {
+            orderRepository.save(order);
+            return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
     private BigInteger getListTotalTransaction(String orderId) {
         List<Transaction> transactionList = transactionRepository.findAllByOrderId(orderId);
         BigInteger totalTransaction = BigInteger.ZERO;

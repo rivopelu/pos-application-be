@@ -17,4 +17,7 @@ public interface OrderController {
 
     @PatchMapping("v1/order-ready/{id}")
     BaseResponse readyToTakeOrder(@PathVariable("id") String id);
+
+    @PatchMapping("v1/order-complete/{id}")
+    BaseResponse completeOrder(@PathVariable("id") String id);
 }
