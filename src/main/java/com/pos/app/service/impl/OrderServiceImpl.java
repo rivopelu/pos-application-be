@@ -127,16 +127,7 @@ public class OrderServiceImpl implements OrderService {
         for (Order order : orderPage.getContent()) {
 
 
-            ResListOrder res = ResListOrder.builder()
-                    .id(order.getId())
-                    .orderCode(order.getOrderCode())
-                    .orderStatus(order.getStatus())
-                    .isPayment(order.getIsPayment())
-                    .createdDate(order.getCreatedDate())
-                    .totalItems(getListTotalItem(order.getId()))
-                    .totalTransaction(getListTotalTransaction(order.getId()))
-                    .build();
-            resListOrders.add(res);
+            resListOrders.add(buildOrderList(order));
         }
         try {
             return new PageImpl<>(resListOrders, orderPage.getPageable(), orderPage.getTotalPages());
@@ -181,6 +172,22 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public List<ResListOrder> getLiveOrderList(OrderStatusEnum status) {
+        List<ResListOrder> resListOrders = new ArrayList<>();
+        String clientId = accountService.getCurrentClientIdOrNull();
+        List<Order> orders = orderRepository.findAllByClientIdAndStatus(clientId, status);
+        for (Order order : orders) {
+            resListOrders.add(buildOrderList(order));
+        }
+        try {
+            return resListOrders;
+
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
     private BigInteger getListTotalTransaction(String orderId) {
         List<Transaction> transactionList = transactionRepository.findAllByOrderId(orderId);
         BigInteger totalTransaction = BigInteger.ZERO;
@@ -197,5 +204,17 @@ public class OrderServiceImpl implements OrderService {
             totalItems = totalItems.add(orderProduct.getQty());
         }
         return totalItems;
+    }
+
+    private ResListOrder buildOrderList(Order order) {
+        return ResListOrder.builder()
+                .id(order.getId())
+                .orderCode(order.getOrderCode())
+                .orderStatus(order.getStatus())
+                .isPayment(order.getIsPayment())
+                .createdDate(order.getCreatedDate())
+                .totalItems(getListTotalItem(order.getId()))
+                .totalTransaction(getListTotalTransaction(order.getId()))
+                .build();
     }
 }

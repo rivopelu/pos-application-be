@@ -2,6 +2,7 @@ package com.pos.app.controller.impl;
 
 import com.pos.app.annotations.BaseControllerImpl;
 import com.pos.app.controller.OrderController;
+import com.pos.app.enums.OrderStatusEnum;
 import com.pos.app.model.request.ReqCreateOrder;
 import com.pos.app.model.response.BaseResponse;
 import com.pos.app.service.OrderService;
@@ -32,5 +33,10 @@ public class OrderControllerImpl implements OrderController {
     @Override
     public BaseResponse completeOrder(String id) {
         return ResponseHelper.createBaseResponse(orderService.completeOrder(id));
+    }
+
+    @Override
+    public BaseResponse getLiveOrderList(OrderStatusEnum status) {
+        return ResponseHelper.createBaseResponse(orderService.getLiveOrderList(status));
     }
 }

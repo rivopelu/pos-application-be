@@ -1,6 +1,7 @@
 package com.pos.app.controller;
 
 import com.pos.app.annotations.BaseController;
+import com.pos.app.enums.OrderStatusEnum;
 import com.pos.app.model.request.ReqCreateOrder;
 import com.pos.app.model.response.BaseResponse;
 import org.springframework.data.domain.Pageable;
@@ -20,4 +21,7 @@ public interface OrderController {
 
     @PatchMapping("v1/order-complete/{id}")
     BaseResponse completeOrder(@PathVariable("id") String id);
+
+    @GetMapping("v1/order-list/live")
+    BaseResponse getLiveOrderList(@RequestParam(name = "status" ) OrderStatusEnum status);
 }
