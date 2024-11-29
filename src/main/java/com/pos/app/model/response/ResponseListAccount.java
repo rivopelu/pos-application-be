@@ -4,6 +4,7 @@ package com.pos.app.model.response;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.pos.app.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,5 +24,6 @@ public class ResponseListAccount {
     private String avatar;
     private String createdBy;
     private Long createdDate;
+    private UserRole role;
 
 }

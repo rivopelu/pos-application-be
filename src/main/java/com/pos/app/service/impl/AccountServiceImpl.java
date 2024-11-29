@@ -188,6 +188,7 @@ public class AccountServiceImpl implements AccountService {
                     .username(account.getUsername())
                     .avatar(account.getAvatar())
                     .id(account.getId())
+                    .role(account.getRole())
                     .createdDate(account.getCreatedDate())
                     .createdBy(getCurrentAccount(account.getCreatedBy()).getName())
                     .build();
