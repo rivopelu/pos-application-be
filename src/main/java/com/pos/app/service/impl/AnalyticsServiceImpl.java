@@ -2,6 +2,7 @@ package com.pos.app.service.impl;
 
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.response.ResponseAnalyticsSummary;
+import com.pos.app.model.response.ResponseChartOrder;
 import com.pos.app.repositories.OrderProductRepository;
 import com.pos.app.repositories.OrderRepository;
 import com.pos.app.repositories.TransactionRepository;
@@ -11,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +39,27 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                     .totalItems(getTotalItems)
                     .build();
 
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public List<ResponseChartOrder> getAnalyticsChartOrder(Date startDate, Date endDate) {
+
+        try {
+            List<Object[]> list = orderRepository.getOrderChart( 8);
+            List<ResponseChartOrder> responseCharts = new ArrayList<>();
+
+            if (!list.isEmpty()) {
+                for (Object[] obj : list) {
+                    ResponseChartOrder.ResponseChartOrderBuilder responseOrderChartBuilder = ResponseChartOrder.builder()
+                            .label((Date) obj[0])
+                            .value((Long) obj[1]);
+                    responseCharts.add(responseOrderChartBuilder.build());
+                }
+            }
+            return responseCharts;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

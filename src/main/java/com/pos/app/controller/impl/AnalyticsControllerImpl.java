@@ -7,6 +7,8 @@ import com.pos.app.service.AnalyticsService;
 import com.pos.app.utils.ResponseHelper;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Date;
+
 @BaseControllerImpl
 @RequiredArgsConstructor
 public class AnalyticsControllerImpl implements AnalyticsController {
@@ -16,5 +18,11 @@ public class AnalyticsControllerImpl implements AnalyticsController {
     public BaseResponse getAnalyticsSummary() {
 
         return ResponseHelper.createBaseResponse(analyticsService.getAnalyticsSummary());
+    }
+
+    @Override
+    public BaseResponse getAnalyticsChartOrder(Date startDate, Date endDate) {
+
+        return  ResponseHelper.createBaseResponse(analyticsService.getAnalyticsChartOrder(startDate, endDate));
     }
 }
