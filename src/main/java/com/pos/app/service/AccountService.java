@@ -1,6 +1,8 @@
 package com.pos.app.service;
 
 import com.pos.app.entities.Account;
+import com.pos.app.enums.ResponseEnum;
+import com.pos.app.model.request.ReqChangePassword;
 import com.pos.app.model.request.RequestCreateAccount;
 import com.pos.app.model.response.ResponseGetMe;
 import com.pos.app.model.response.ResponseListAccount;
@@ -30,4 +32,8 @@ public interface AccountService {
     ResponsePasswordCreateAccount newAccountByAdmin(RequestCreateAccount req);
 
     Page<ResponseListAccount> listAccount(Pageable pageable);
+
+    ResponsePasswordCreateAccount resetPassword(String id);
+
+    ResponseEnum changePassword(ReqChangePassword req);
 }

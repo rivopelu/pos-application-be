@@ -7,6 +7,7 @@ import com.pos.app.enums.UserRole;
 import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
+import com.pos.app.model.request.ReqChangePassword;
 import com.pos.app.model.request.RequestCreateAccount;
 import com.pos.app.model.response.ResponseGetMe;
 import com.pos.app.model.response.ResponseListAccount;
@@ -19,6 +20,9 @@ import com.pos.app.utils.UtilsHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +39,7 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordEncoder passwordEncoder;
     private final HttpServletRequest httpServletRequest;
     private final ClientRepository clientRepository;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public String createNewAccount(RequestCreateAccount req) {
@@ -196,6 +201,44 @@ public class AccountServiceImpl implements AccountService {
         }
         try {
             return new PageImpl<>(responseListAccounts, pageable, accountPage.getTotalElements());
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponsePasswordCreateAccount resetPassword(String id) {
+        Optional<Account> findAccount = accountRepository.findById(id);
+        String passwordGenerated = UtilsHelper.generateRandomPassword();
+        if (findAccount.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.ACCOUNT_NOT_FOUND.name());
+        }
+        Account account = findAccount.get();
+        String passwordEncode = passwordEncoder.encode(passwordGenerated);
+        account.setPassword(passwordEncode);
+        accountRepository.save(account);
+        try {
+            return ResponsePasswordCreateAccount.builder()
+                    .password(passwordGenerated)
+                    .build();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseEnum changePassword(ReqChangePassword req) {
+        Account account = getCurrentAccount();
+        try {
+            Authentication authentication;
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(account.getUsername(), req.getOldPassword()));
+            if (!authentication.isAuthenticated()) {
+                throw new BadRequestException(ResponseEnum.WRONG_OLD_PASSWORD.name());
+            }
+            String encodePassword = passwordEncoder.encode(req.getNewPassword());
+            account.setPassword(encodePassword);
+            accountRepository.save(account);
+            return ResponseEnum.SUCCESS;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
