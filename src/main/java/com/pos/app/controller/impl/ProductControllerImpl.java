@@ -17,4 +17,14 @@ public class ProductControllerImpl implements ProductController {
     public BaseResponse createNewProduct(ReqCreateProduct req) {
         return ResponseHelper.createBaseResponse(productService.createNewProduct(req));
     }
+
+    @Override
+    public BaseResponse editProduct(String id, ReqCreateProduct req) {
+        return ResponseHelper.createBaseResponse(productService.editProduct(id, req));
+    }
+
+    @Override
+    public BaseResponse getDetailProduct(String id) {
+        return ResponseHelper.createBaseResponse(productService.getDetailProduct(id));
+    }
 }
