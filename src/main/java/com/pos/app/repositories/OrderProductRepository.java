@@ -19,7 +19,7 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Stri
 
     @Query(value = "select p.id, p.name," +
             " o.id, op.qty, op.pricePerQty," +
-            " t.subTotal, t.totalTransaction, " +
+            " op.totalPrice, t.totalTransaction, " +
             "t.taxPercentage, op.createdDate" +
             " from OrderProduct as op " +
             "join Product  as p on op.product.id = p.id " +
