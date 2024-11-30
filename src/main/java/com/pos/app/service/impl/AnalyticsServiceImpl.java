@@ -11,6 +11,7 @@ import com.pos.app.service.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,14 +49,14 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     public List<ResponseChartOrder> getAnalyticsChartOrder(Date startDate, Date endDate) {
 
         try {
-            List<Object[]> list = orderRepository.getOrderChart( 8);
+            List<Object[]> list = orderRepository.getOrderChart(8);
             List<ResponseChartOrder> responseCharts = new ArrayList<>();
 
             if (!list.isEmpty()) {
                 for (Object[] obj : list) {
                     ResponseChartOrder.ResponseChartOrderBuilder responseOrderChartBuilder = ResponseChartOrder.builder()
                             .label((Date) obj[0])
-                            .value((Long) obj[1]);
+                            .value(obj[1]);
                     responseCharts.add(responseOrderChartBuilder.build());
                 }
             }
@@ -63,5 +64,26 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    @Override
+    public List<ResponseChartOrder> getAnalyticsChartRevenue(Date startDate, Date endDate) {
+        try {
+            List<Object[]> list = transactionRepository.getChartRevenue(8);
+            List<ResponseChartOrder> responseCharts = new ArrayList<>();
+
+            if (!list.isEmpty()) {
+                for (Object[] obj : list) {
+                    ResponseChartOrder.ResponseChartOrderBuilder responseOrderChartBuilder = ResponseChartOrder.builder()
+                            .label((Date) obj[0])
+                            .value(obj[1]);
+                    responseCharts.add(responseOrderChartBuilder.build());
+                }
+            }
+            return responseCharts;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+
     }
 }

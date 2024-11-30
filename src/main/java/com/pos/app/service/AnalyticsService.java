@@ -11,4 +11,6 @@ public interface AnalyticsService {
     ResponseAnalyticsSummary getAnalyticsSummary();
 
     List<ResponseChartOrder> getAnalyticsChartOrder(Date startDate, Date endDate);
+
+    List<ResponseChartOrder> getAnalyticsChartRevenue(Date startDate, Date endDate);
 }

@@ -18,7 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ResponseChartOrder {
+public class ResponseChartOrder<T> {
     private Date label;
-    private Long value;
+    private T value;
 }

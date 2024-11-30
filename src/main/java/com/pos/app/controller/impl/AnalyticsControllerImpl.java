@@ -23,6 +23,11 @@ public class AnalyticsControllerImpl implements AnalyticsController {
     @Override
     public BaseResponse getAnalyticsChartOrder(Date startDate, Date endDate) {
 
-        return  ResponseHelper.createBaseResponse(analyticsService.getAnalyticsChartOrder(startDate, endDate));
+        return ResponseHelper.createBaseResponse(analyticsService.getAnalyticsChartOrder(startDate, endDate));
+    }
+
+    @Override
+    public BaseResponse getAnalyticsChartRevenue(Date startDate, Date endDate) {
+        return ResponseHelper.createBaseResponse(analyticsService.getAnalyticsChartRevenue(startDate, endDate));
     }
 }

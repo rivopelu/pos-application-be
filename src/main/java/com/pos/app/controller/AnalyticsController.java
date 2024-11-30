@@ -18,4 +18,10 @@ public interface AnalyticsController {
             @RequestParam("start-date") Date startDate,
             @RequestParam("end-date") Date endDate
     );
+
+    @GetMapping("v1/chart-revenue")
+    BaseResponse getAnalyticsChartRevenue(
+            @RequestParam("start-date") Date startDate,
+            @RequestParam("end-date") Date endDate
+    );
 }
