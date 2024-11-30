@@ -17,6 +17,7 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Stri
     @Query(value = "select sum(op.qty) from OrderProduct  as op where op.clientId = :clientId")
     BigInteger getSumQty(String clientId);
 
+
     @Query(value = "select p.id, p.name," +
             " o.id, op.qty, op.pricePerQty," +
             " op.totalPrice, t.totalTransaction, " +
