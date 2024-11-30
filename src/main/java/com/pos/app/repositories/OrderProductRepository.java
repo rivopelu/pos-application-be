@@ -2,6 +2,8 @@ package com.pos.app.repositories;
 
 import com.pos.app.entities.Order;
 import com.pos.app.entities.OrderProduct;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,4 +17,14 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Stri
     @Query(value = "select sum(op.qty) from OrderProduct  as op where op.clientId = :clientId")
     BigInteger getSumQty(String clientId);
 
+    @Query(value = "select p.id, p.name," +
+            " o.id, op.qty, op.pricePerQty," +
+            " t.subTotal, t.totalTransaction, " +
+            "t.taxPercentage, op.createdDate" +
+            " from OrderProduct as op " +
+            "join Product  as p on op.product.id = p.id " +
+            "join Order as o on o.id = op.order.id " +
+            "join Transaction  as t on t.order.id = o.id " +
+            "order by op.createdDate desc ")
+    Page<Object[]> getSalesReport(Pageable pageable);
 }
