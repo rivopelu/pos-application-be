@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -122,14 +123,26 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     public ResponseEntity<byte[]> downloadReport() {
         List<Object[]> orderProductPage = orderProductRepository.getSalesReport();
         try {
-            String[] headers = {"Product Name", "Product ID", "order ID", "qty", "price per qty", "total price", "total transaction", "tax", "date"};
+            String[] headers = {"Product ID", "Product name", "order ID", "qty", "price per qty", "total price", "total transaction", "tax", "date"};
             String[][] data = new String[orderProductPage.size()][headers.length];
 
             int index = 0;
             for (Object[] obj : orderProductPage) {
                 String[] objData = new String[obj.length];
                 for (int i = 0; i < obj.length; i++) {
-                    objData[i] = obj[i] != null ? obj[i].toString() : "";
+
+                    if (obj[i] instanceof Long) { // Check if the object is a Long (Unix time)
+                        long unixTime = (Long) obj[i];
+                        Date date = new Date(unixTime);
+
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        String formattedDate = formatter.format(date);
+
+                        objData[i] = formattedDate;
+                    } else {
+                        objData[i] = obj[i] != null ? obj[i].toString() : "";
+                    }
+
                 }
                 data[index] = objData;
                 index++;
