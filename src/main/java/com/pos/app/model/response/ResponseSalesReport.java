@@ -18,7 +18,6 @@ import java.math.BigInteger;
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ResponseSalesReport {
-
     private String productName;
     private String productId;
     private String orderId;

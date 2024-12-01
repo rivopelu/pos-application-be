@@ -13,8 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -107,6 +113,43 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 responseSalesReportList.add(responseSalesReport);
             }
             return new PageImpl<>(responseSalesReportList, pageable, orderProductPage.getTotalElements());
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<byte[]> downloadReport() {
+        List<Object[]> orderProductPage = orderProductRepository.getSalesReport();
+        try {
+            String[] headers = {"Product Name", "Product ID", "order ID", "qty", "price per qty", "total price", "total transaction", "tax", "date"};
+            String[][] data = new String[orderProductPage.size()][headers.length];
+
+            int index = 0;
+            for (Object[] obj : orderProductPage) {
+                String[] objData = new String[obj.length];
+                for (int i = 0; i < obj.length; i++) {
+                    objData[i] = obj[i] != null ? obj[i].toString() : "";
+                }
+                data[index] = objData;
+                index++;
+            }
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(byteArrayOutputStream));
+
+            writer.println(String.join(",", headers));
+
+            for (String[] row : data) {
+                writer.println(String.join(",", row));
+            }
+
+            writer.flush();
+            writer.close();
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add("Content-Disposition", "attachment; filename=data.csv");
+
+            return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.OK);
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

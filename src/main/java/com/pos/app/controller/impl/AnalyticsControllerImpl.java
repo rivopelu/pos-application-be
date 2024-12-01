@@ -7,6 +7,7 @@ import com.pos.app.service.AnalyticsService;
 import com.pos.app.utils.ResponseHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Date;
 
@@ -35,5 +36,11 @@ public class AnalyticsControllerImpl implements AnalyticsController {
     @Override
     public BaseResponse getReportSales(Pageable pageable, Date startDate, Date endDate) {
         return ResponseHelper.createBaseResponse(analyticsService.getReportSales(pageable, startDate, endDate));
+    }
+
+    @Override
+    public ResponseEntity<byte[]> downloadReport() {
+
+        return analyticsService.downloadReport();
     }
 }
