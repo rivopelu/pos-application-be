@@ -38,7 +38,7 @@ public class AccountRepositoryTest {
 
     @Test
     public void contextLoads() {
-        Assertions.assertThat(accountRepository).isNotNull(); // Check if the repository is injected
+        Assertions.assertThat(accountRepository).isNotNull();
     }
 
     @Test
