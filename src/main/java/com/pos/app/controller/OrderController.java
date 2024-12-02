@@ -23,5 +23,9 @@ public interface OrderController {
     BaseResponse completeOrder(@PathVariable("id") String id);
 
     @GetMapping("v1/order-list/live")
-    BaseResponse getLiveOrderList(@RequestParam(name = "status" ) OrderStatusEnum status);
+    BaseResponse getLiveOrderList(@RequestParam(name = "status") OrderStatusEnum status);
+
+    @GetMapping("v1/generate-qr-order")
+    BaseResponse generateQROrder();
+
 }

@@ -39,4 +39,9 @@ public class OrderControllerImpl implements OrderController {
     public BaseResponse getLiveOrderList(OrderStatusEnum status) {
         return ResponseHelper.createBaseResponse(orderService.getLiveOrderList(status));
     }
+
+    @Override
+    public BaseResponse generateQROrder() {
+        return ResponseHelper.createBaseResponse(orderService.generateQROrder());
+    }
 }

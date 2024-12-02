@@ -11,6 +11,7 @@ import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateOrder;
 import com.pos.app.model.response.ResListOrder;
+import com.pos.app.model.response.ResponseIdQr;
 import com.pos.app.repositories.OrderProductRepository;
 import com.pos.app.repositories.OrderRepository;
 import com.pos.app.repositories.ProductRepository;
@@ -192,6 +193,15 @@ public class OrderServiceImpl implements OrderService {
             return resListOrders;
         } catch (Exception e) {
             throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseIdQr generateQROrder() {
+        try {
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
