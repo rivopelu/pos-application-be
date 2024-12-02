@@ -56,6 +56,9 @@ public class Account implements UserDetails {
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @Column(name = "is_inactive")
+    private Boolean isInactive;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -100,7 +103,6 @@ public class Account implements UserDetails {
 
     @PreUpdate
     public void preUpdate() {
-
         this.updatedDate = new Date().getTime();
     }
 

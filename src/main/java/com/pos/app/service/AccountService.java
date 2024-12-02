@@ -36,4 +36,6 @@ public interface AccountService {
     ResponsePasswordCreateAccount resetPassword(String id);
 
     ResponseEnum changePassword(ReqChangePassword req);
+
+    ResponseEnum inActiveAccount(String id);
 }

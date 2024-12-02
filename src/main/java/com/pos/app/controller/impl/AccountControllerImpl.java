@@ -46,4 +46,10 @@ public class AccountControllerImpl implements AccountController {
     public BaseResponse changePassword(ReqChangePassword req) {
         return ResponseHelper.createBaseResponse(accountService.changePassword(req));
     }
+
+    @Override
+    public BaseResponse inactiveAccount(String id) {
+
+        return  ResponseHelper.createBaseResponse(accountService.inActiveAccount(id));
+    }
 }

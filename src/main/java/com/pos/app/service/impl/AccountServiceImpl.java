@@ -194,6 +194,7 @@ public class AccountServiceImpl implements AccountService {
                     .avatar(account.getAvatar())
                     .id(account.getId())
                     .role(account.getRole())
+                    .isInactive(account.getIsInactive())
                     .createdDate(account.getCreatedDate())
                     .createdBy(getCurrentAccount(account.getCreatedBy()).getName())
                     .build();
@@ -242,5 +243,26 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    @Override
+    public ResponseEnum inActiveAccount(String id) {
+
+
+        try {
+
+            Optional<Account> findAccount = accountRepository.findById(id);
+            if (findAccount.isEmpty()) {
+                throw new NotFoundException(ResponseEnum.ACCOUNT_NOT_FOUND.name());
+            }
+            Account account = findAccount.get();
+
+            account.setIsInactive(true);
+            accountRepository.save(account);
+            return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+
     }
 }

@@ -23,6 +23,7 @@ public class ResponseListAccount {
     private String id;
     private String avatar;
     private String createdBy;
+    private Boolean isInactive;
     private Long createdDate;
     private UserRole role;
 

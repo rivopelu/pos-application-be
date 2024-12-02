@@ -29,5 +29,8 @@ public interface AccountController {
     @PutMapping("v1/change-password")
     BaseResponse changePassword(@RequestBody ReqChangePassword req);
 
+    @PatchMapping("v1/inactive-account/{id}")
+    BaseResponse inactiveAccount(@PathVariable String id);
+
 
 }

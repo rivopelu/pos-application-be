@@ -18,5 +18,6 @@
     <include file="classpath:db/changelog/1.3.2_add_column_is_payment_order.xml"/>
     <include file="classpath:db/changelog/1.3.3_modify_column_order.xml"/>
     <include file="classpath:db/changelog/1.3.4_add_client_id_column.xml"/>
+    <include file="classpath:db/changelog/1.3.5_add_column_is_inactive_account.xml"/>
 
 </databaseChangeLog>

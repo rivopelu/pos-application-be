@@ -48,7 +48,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                     .totalRevenue(getTotalRevenue)
                     .totalItems(getTotalItems)
                     .build();
-
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
@@ -78,7 +77,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         try {
             List<Object[]> list = transactionRepository.getChartRevenue(8);
             List<ResponseChartOrder> responseCharts = new ArrayList<>();
-
             if (!list.isEmpty()) {
                 for (Object[] obj : list) {
                     ResponseChartOrder.ResponseChartOrderBuilder responseOrderChartBuilder = ResponseChartOrder.builder()

@@ -65,6 +65,9 @@ public class AuthServiceImpl implements AuthService {
 
     private ResponseSignIn getSignIn(Account account, String password) {
         try {
+            if (account.getIsInactive()) {
+                throw new BadRequestException(ResponseEnum.SIGN_IN_FAILED.name());
+            }
             Authentication authentication;
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(account.getUsername(), password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
