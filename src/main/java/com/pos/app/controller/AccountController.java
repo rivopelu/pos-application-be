@@ -13,7 +13,6 @@ public interface AccountController {
     @PostMapping("v1/new-account")
     String newAccount(@RequestBody RequestCreateAccount req);
 
-
     @PostMapping("v1/admin/new-account")
     BaseResponse newAccountByAdmin(@RequestBody RequestCreateAccount req);
 
@@ -31,6 +30,5 @@ public interface AccountController {
 
     @PatchMapping("v1/inactive-account/{id}")
     BaseResponse inactiveAccount(@PathVariable String id);
-
 
 }
