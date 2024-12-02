@@ -229,6 +229,79 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseEnum createOrderViaQr(String code, ReqCreateOrderViaQrCode req) {
+        Optional<QrCode> findQrCode = qrCodeRepository.findByCode(code);
+        if (findQrCode.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.REQUEST_INVALID.name());
+        }
+        QrCode qrCode = findQrCode.get();
+        String clientId = qrCode.getClient().getId();
+        Optional<Order> findOrder = orderRepository.findById(qrCode.getOrder().getId());
+        if (findOrder.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
+        }
+        Order order = findOrder.get();
+        int index = 0;
+        List<ReqCreateOrderViaQrCode.ListProductCreateOrder> productList = req.getProducts();
+        List<String> productIds = new ArrayList<>();
+        List<BigInteger> productQty = new ArrayList<>();
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        BigInteger totalPrice = BigInteger.ZERO;
+
+        for (ReqCreateOrderViaQrCode.ListProductCreateOrder listProductCreateOrder : productList) {
+            productIds.add(listProductCreateOrder.getProductId());
+            productQty.add(BigInteger.valueOf(listProductCreateOrder.getQty()));
+        }
+        List<Product> existProduct = productRepository.findExistingIdsByIds(productIds);
+
+        boolean checkProduct = existProduct.size() == productIds.size();
+
+        if (!checkProduct) {
+            throw new BadRequestException(ResponseEnum.PRODUCTS_NOT_FOUND.name());
+        }
+
+        order.setStatus(OrderStatusEnum.IN_PROGRESS);
+        order.setIsPayment(false);
+
+
+        Order orderSave = orderRepository.saveAndFlush(order);
+
+        for (ReqCreateOrderViaQrCode.ListProductCreateOrder productCreateOrder : productList) {
+            Optional<Product> findProduct = productRepository.findById(productCreateOrder.getProductId());
+            if (findProduct.isEmpty()) {
+                throw new NotFoundException(ResponseEnum.PRODUCTS_NOT_FOUND.name());
+            }
+            Product product = findProduct.get();
+            BigInteger qty = productQty.get(index);
+            index++;
+            BigInteger total = product.getPrice().multiply(qty);
+
+            totalPrice = totalPrice.add(total);
+
+            OrderProduct orderProduct = OrderProduct.builder()
+                    .qty(qty)
+                    .totalPrice(total)
+                    .pricePerQty(product.getPrice())
+                    .product(product)
+                    .clientId(clientId)
+                    .order(orderSave)
+                    .createdBy(order.getCreatedBy())
+                    .build();
+            orderProductList.add(orderProduct);
+        }
+
+        orderProductRepository.saveAll(orderProductList);
+
+        BigInteger percentage = NumberHelper.getPercentageTotal(req.getTax(), totalPrice);
+        Transaction transaction = Transaction.builder()
+                .order(orderSave)
+                .subTotal(totalPrice)
+                .totalTransaction(percentage.add(totalPrice))
+                .taxPercentage(req.getTax())
+                .clientId(clientId)
+                .createdBy(order.getCreatedBy())
+                .build();
+
+        transactionRepository.save(transaction);
         try {
             return ResponseEnum.SUCCESS;
         } catch (Exception e) {
