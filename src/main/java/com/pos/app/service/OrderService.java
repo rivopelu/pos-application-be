@@ -4,6 +4,7 @@ package com.pos.app.service;
 import com.pos.app.enums.OrderStatusEnum;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.model.request.ReqCreateOrder;
+import com.pos.app.model.request.ReqCreateOrderViaQrCode;
 import com.pos.app.model.response.ResListOrder;
 import com.pos.app.model.response.ResponseIdQr;
 import org.springframework.data.domain.Page;
@@ -25,4 +26,6 @@ public interface OrderService {
 
 
     ResponseIdQr generateQROrder();
+
+    ResponseEnum createOrderViaQr(String code, ReqCreateOrderViaQrCode req);
 }

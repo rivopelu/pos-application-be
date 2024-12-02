@@ -8,6 +8,7 @@ import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateOrder;
+import com.pos.app.model.request.ReqCreateOrderViaQrCode;
 import com.pos.app.model.response.ResListOrder;
 import com.pos.app.model.response.ResponseIdQr;
 import com.pos.app.repositories.*;
@@ -223,6 +224,15 @@ public class OrderServiceImpl implements OrderService {
             return ResponseIdQr.builder().id(qrCode.getCode()).build();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ResponseEnum createOrderViaQr(String code, ReqCreateOrderViaQrCode req) {
+        try {
+            return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
         }
     }
 
