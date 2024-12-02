@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.type.format.jakartajson.JakartaJsonIntegration;
 
+import java.util.Date;
+import java.util.UUID;
+
 @Data
 @Entity
 @Builder
@@ -41,5 +44,23 @@ public class QrCode {
 
     @Column(name = "updated_by")
     private String updatedBy;
+
+
+    @PrePersist
+    public void prePersist() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
+        this.createdDate = new Date().getTime();
+        this.updatedDate = new Date().getTime();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+
+
+        this.updatedDate = new Date().getTime();
+    }
+
 
 }

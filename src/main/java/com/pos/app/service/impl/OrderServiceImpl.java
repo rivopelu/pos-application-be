@@ -1,9 +1,7 @@
 package com.pos.app.service.impl;
 
-import com.pos.app.entities.Order;
-import com.pos.app.entities.OrderProduct;
-import com.pos.app.entities.Product;
-import com.pos.app.entities.Transaction;
+import com.pos.app.controller.OrderController;
+import com.pos.app.entities.*;
 import com.pos.app.enums.OrderStatusEnum;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.exception.BadRequestException;
@@ -12,13 +10,9 @@ import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateOrder;
 import com.pos.app.model.response.ResListOrder;
 import com.pos.app.model.response.ResponseIdQr;
-import com.pos.app.repositories.OrderProductRepository;
-import com.pos.app.repositories.OrderRepository;
-import com.pos.app.repositories.ProductRepository;
-import com.pos.app.repositories.TransactionRepository;
+import com.pos.app.repositories.*;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.OrderService;
-import com.pos.app.service.WebSocketService;
 import com.pos.app.utils.NumberHelper;
 import com.pos.app.utils.UtilsHelper;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +24,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductRepository orderProductRepository;
     private final TransactionRepository transactionRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final ClientRepository clientRepository;
+    private final QrCodeRepository qrCodeRepository;
 
     @Override
     public ResponseEnum createOrder(ReqCreateOrder req) {
@@ -198,8 +195,32 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseIdQr generateQROrder() {
+        String clientId = accountService.getCurrentClientIdOrNull();
+        BigInteger getLatestCode = orderRepository.findLatestCode(clientId);
+        Optional<Client> client = clientRepository.findById(clientId);
+        String currentAccountId = accountService.getCurrentAccountId();
+        if (client.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.CLIENT_NOT_FOUND.name());
+        }
+
         try {
-            return null;
+            Order order = Order.builder()
+                    .status(OrderStatusEnum.IN_PROGRESS)
+                    .isPayment(false)
+                    .orderCode(UtilsHelper.generateOrderCode(getLatestCode))
+                    .clientId(clientId)
+                    .createdBy(accountService.getCurrentAccountId())
+                    .build();
+            order = orderRepository.save(order);
+            QrCode qrCode = QrCode.builder()
+                    .code(UUID.randomUUID().toString())
+                    .order(order)
+                    .client(client.get())
+                    .createdBy(currentAccountId)
+                    .updatedBy(currentAccountId)
+                    .build();
+            qrCode = qrCodeRepository.save(qrCode);
+            return ResponseIdQr.builder().id(qrCode.getCode()).build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
