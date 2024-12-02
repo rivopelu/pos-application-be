@@ -2,14 +2,17 @@ package com.pos.app.service.impl;
 
 import com.pos.app.entities.Category;
 import com.pos.app.entities.Product;
+import com.pos.app.entities.QrCode;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateCategory;
 import com.pos.app.model.response.ResListCategory;
 import com.pos.app.model.response.ResListProduct;
+import com.pos.app.model.response.ResponseListAccount;
 import com.pos.app.repositories.CategoryRepository;
 import com.pos.app.repositories.ProductRepository;
+import com.pos.app.repositories.QrCodeRepository;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.MasterDataService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
     private final ProductRepository productRepository;
+    private final QrCodeRepository qrCodeRepository;
 
     @Override
     public ResponseEnum createCategory(List<ReqCreateCategory> req) {
@@ -76,6 +81,24 @@ public class MasterDataServiceImpl implements MasterDataService {
     public List<ResListProduct> getAllProduct() {
         List<ResListProduct> resListProducts = new ArrayList<>();
         List<Product> products = productRepository.findAllByClientId(accountService.getCurrentClientIdOrNull());
+        return buildResProduct(resListProducts, products);
+
+    }
+
+    @Override
+    public List<ResListProduct> getPublicAllProduct(String code) {
+        Optional<QrCode> findQrCode = qrCodeRepository.findByCode(code);
+        if (findQrCode.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.REQUEST_INVALID.name());
+        }
+        QrCode qrCode = findQrCode.get();
+        List<ResListProduct> resListProducts = new ArrayList<>();
+        String clientId = qrCode.getClient().getId();
+        List<Product> products = productRepository.findAllByClientId(clientId);
+        return buildResProduct(resListProducts, products);
+    }
+
+    private List<ResListProduct> buildResProduct(List<ResListProduct> resListProducts, List<Product> products) {
         for (Product product : products) {
             ResListProduct resListProduct = ResListProduct.builder()
                     .name(product.getName())
@@ -95,6 +118,5 @@ public class MasterDataServiceImpl implements MasterDataService {
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
-
     }
 }
