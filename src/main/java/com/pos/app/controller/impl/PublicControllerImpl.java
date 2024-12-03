@@ -28,5 +28,10 @@ public class PublicControllerImpl implements PublicController {
         return ResponseHelper.createBaseResponse(orderService.createOrderViaQr(code, req));
     }
 
+    @Override
+    public BaseResponse getListOrderPublic(String code) {
+        return ResponseHelper.createBaseResponse(orderService.getListOrderPublic(code));
+    }
+
 
 }

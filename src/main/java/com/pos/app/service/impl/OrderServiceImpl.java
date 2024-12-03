@@ -10,7 +10,9 @@ import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateOrder;
 import com.pos.app.model.request.ReqCreateOrderViaQrCode;
 import com.pos.app.model.response.ResListOrder;
+import com.pos.app.model.response.ResListProduct;
 import com.pos.app.model.response.ResponseIdQr;
+import com.pos.app.model.response.ResponseListOrderPublic;
 import com.pos.app.repositories.*;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.OrderService;
@@ -126,8 +128,6 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> orderPage = orderRepository.findAll(pageable);
         List<ResListOrder> resListOrders = new ArrayList<>();
         for (Order order : orderPage.getContent()) {
-
-
             resListOrders.add(buildOrderList(order));
         }
         try {
@@ -304,6 +304,54 @@ public class OrderServiceImpl implements OrderService {
         transactionRepository.save(transaction);
         try {
             return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseListOrderPublic getListOrderPublic(String code) {
+        Optional<QrCode> findCode = qrCodeRepository.findByCode(code);
+        if (findCode.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.REQUEST_INVALID.name());
+        }
+        Optional<Order> findOrder = orderRepository.findById(findCode.get().getOrder().getId());
+        if (findOrder.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
+        }
+        Order order = findOrder.get();
+
+        List<OrderProduct> orderProductList = orderProductRepository.findAllByOrderId(order.getId());
+        List<ResListProduct> products = new ArrayList<>();
+
+        for (OrderProduct orderProduct : orderProductList) {
+            Product product = orderProduct.getProduct();
+            ResListProduct resProduct = ResListProduct.builder()
+                    .name(orderProduct.getProduct().getName())
+                    .id(orderProduct.getProduct().getId())
+                    .image(product.getImage())
+                    .price(orderProduct.getPricePerQty())
+                    .categoryName(product.getCategory().getName())
+                    .categoryId(product.getCategory().getId())
+                    .build();
+            products.add(resProduct);
+        }
+
+        BigInteger totalTransaction = BigInteger.ZERO;
+        BigInteger subTotal = BigInteger.ZERO;
+        List<Transaction> findTransaction = transactionRepository.findAllByOrderId(order.getId());
+        for (Transaction transaction : findTransaction) {
+            totalTransaction = totalTransaction.add(transaction.getTotalTransaction());
+            subTotal = subTotal.add(transaction.getSubTotal());
+        }
+        try {
+            return ResponseListOrderPublic.builder()
+                    .orderId(order.getId())
+                    .tax(BigInteger.valueOf(11))
+                    .total(totalTransaction)
+                    .products(products)
+                    .subTotal(subTotal)
+                    .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

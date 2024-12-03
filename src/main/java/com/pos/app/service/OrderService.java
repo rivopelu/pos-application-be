@@ -7,6 +7,7 @@ import com.pos.app.model.request.ReqCreateOrder;
 import com.pos.app.model.request.ReqCreateOrderViaQrCode;
 import com.pos.app.model.response.ResListOrder;
 import com.pos.app.model.response.ResponseIdQr;
+import com.pos.app.model.response.ResponseListOrderPublic;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -28,4 +29,6 @@ public interface OrderService {
     ResponseIdQr generateQROrder();
 
     ResponseEnum createOrderViaQr(String code, ReqCreateOrderViaQrCode req);
+
+    ResponseListOrderPublic getListOrderPublic(String code);
 }

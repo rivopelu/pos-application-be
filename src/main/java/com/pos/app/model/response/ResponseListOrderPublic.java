@@ -1,6 +1,5 @@
 package com.pos.app.model.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -10,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,15 +17,10 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
-public class ResListProduct {
-    private String id;
-    private String name;
-    private String description;
-    private String image;
-    private BigInteger price;
-    private String categoryName;
-    private String categoryId;
-    private String createdBy;
-    private Long createdDate;
+public class ResponseListOrderPublic {
+    private String orderId;
+    private BigInteger subTotal;
+    private BigInteger tax;
+    private BigInteger total;
+    private List<ResListProduct> products;
 }

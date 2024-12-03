@@ -16,4 +16,8 @@ public interface PublicController {
 
     @PostMapping("v1/order/create/{code}")
     BaseResponse createOrderViaQr(@PathVariable String code, @RequestBody ReqCreateOrderViaQrCode req);
+
+    @GetMapping("v1/order/list-order-public/{code}")
+    BaseResponse getListOrderPublic(@PathVariable String code);
+
 }
