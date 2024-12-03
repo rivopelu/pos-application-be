@@ -183,7 +183,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         try {
-            Order order = Order.builder().status(OrderStatusEnum.IN_PROGRESS).isPayment(false).orderCode(UtilsHelper.generateOrderCode(getLatestCode)).clientId(clientId).createdBy(accountService.getCurrentAccountId()).build();
+            Order order = Order.builder().status(OrderStatusEnum.PENDING).isPayment(false).orderCode(UtilsHelper.generateOrderCode(getLatestCode)).clientId(clientId).createdBy(accountService.getCurrentAccountId()).build();
             order = orderRepository.save(order);
             QrCode qrCode = QrCode.builder().code(UUID.randomUUID().toString()).order(order).client(client.get()).createdBy(currentAccountId).updatedBy(currentAccountId).build();
             qrCode = qrCodeRepository.save(qrCode);
@@ -225,7 +225,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BadRequestException(ResponseEnum.PRODUCTS_NOT_FOUND.name());
         }
 
-        order.setStatus(OrderStatusEnum.PENDING);
+        order.setStatus(OrderStatusEnum.IN_PROGRESS);
         order.setIsPayment(false);
 
 
