@@ -31,4 +31,6 @@ public interface OrderService {
     ResponseEnum createOrderViaQr(String code, ReqCreateOrderViaQrCode req);
 
     ResponseListOrderPublic getListOrderPublic(String code);
+
+    ResponseEnum requestBill(String code);
 }

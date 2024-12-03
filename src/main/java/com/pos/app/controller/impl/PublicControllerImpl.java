@@ -33,5 +33,10 @@ public class PublicControllerImpl implements PublicController {
         return ResponseHelper.createBaseResponse(orderService.getListOrderPublic(code));
     }
 
+    @Override
+    public BaseResponse requestBillOrder(String code) {
+        return ResponseHelper.createBaseResponse(orderService.requestBill(code));
+    }
+
 
 }

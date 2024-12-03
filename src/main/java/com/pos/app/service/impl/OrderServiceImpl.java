@@ -1,6 +1,5 @@
 package com.pos.app.service.impl;
 
-import com.pos.app.controller.OrderController;
 import com.pos.app.entities.*;
 import com.pos.app.enums.OrderStatusEnum;
 import com.pos.app.enums.ResponseEnum;
@@ -66,13 +65,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             BigInteger getLatestCode = orderRepository.findLatestCode(clientId);
-            Order orderBuild = Order.builder()
-                    .status(OrderStatusEnum.IN_PROGRESS)
-                    .isPayment(req.getIsPayment())
-                    .orderCode(UtilsHelper.generateOrderCode(getLatestCode))
-                    .clientId(clientId)
-                    .createdBy(accountService.getCurrentAccountId())
-                    .build();
+            Order orderBuild = Order.builder().status(OrderStatusEnum.IN_PROGRESS).isPayment(req.getIsPayment()).orderCode(UtilsHelper.generateOrderCode(getLatestCode)).clientId(clientId).createdBy(accountService.getCurrentAccountId()).build();
 
             Order orderSave = orderRepository.saveAndFlush(orderBuild);
 
@@ -88,29 +81,14 @@ public class OrderServiceImpl implements OrderService {
 
                 totalPrice = totalPrice.add(total);
 
-                OrderProduct orderProduct = OrderProduct.builder()
-                        .qty(qty)
-                        .totalPrice(total)
-                        .pricePerQty(product.getPrice())
-                        .product(product)
-                        .clientId(clientId)
-                        .order(orderSave)
-                        .createdBy(accountService.getCurrentAccountId())
-                        .build();
+                OrderProduct orderProduct = OrderProduct.builder().qty(qty).totalPrice(total).pricePerQty(product.getPrice()).product(product).clientId(clientId).order(orderSave).createdBy(accountService.getCurrentAccountId()).build();
                 orderProductList.add(orderProduct);
             }
 
             orderProductRepository.saveAll(orderProductList);
 
             BigInteger percentage = NumberHelper.getPercentageTotal(req.getTax(), totalPrice);
-            Transaction transaction = Transaction.builder()
-                    .order(orderSave)
-                    .subTotal(totalPrice)
-                    .totalTransaction(percentage.add(totalPrice))
-                    .taxPercentage(req.getTax())
-                    .clientId(clientId)
-                    .createdBy(accountService.getCurrentAccountId())
-                    .build();
+            Transaction transaction = Transaction.builder().order(orderSave).subTotal(totalPrice).totalTransaction(percentage.add(totalPrice)).taxPercentage(req.getTax()).clientId(clientId).createdBy(accountService.getCurrentAccountId()).build();
 
             transactionRepository.save(transaction);
             return ResponseEnum.SUCCESS;
@@ -205,21 +183,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         try {
-            Order order = Order.builder()
-                    .status(OrderStatusEnum.IN_PROGRESS)
-                    .isPayment(false)
-                    .orderCode(UtilsHelper.generateOrderCode(getLatestCode))
-                    .clientId(clientId)
-                    .createdBy(accountService.getCurrentAccountId())
-                    .build();
+            Order order = Order.builder().status(OrderStatusEnum.IN_PROGRESS).isPayment(false).orderCode(UtilsHelper.generateOrderCode(getLatestCode)).clientId(clientId).createdBy(accountService.getCurrentAccountId()).build();
             order = orderRepository.save(order);
-            QrCode qrCode = QrCode.builder()
-                    .code(UUID.randomUUID().toString())
-                    .order(order)
-                    .client(client.get())
-                    .createdBy(currentAccountId)
-                    .updatedBy(currentAccountId)
-                    .build();
+            QrCode qrCode = QrCode.builder().code(UUID.randomUUID().toString()).order(order).client(client.get()).createdBy(currentAccountId).updatedBy(currentAccountId).build();
             qrCode = qrCodeRepository.save(qrCode);
             return ResponseIdQr.builder().id(qrCode.getCode()).build();
         } catch (Exception e) {
@@ -277,29 +243,14 @@ public class OrderServiceImpl implements OrderService {
 
             totalPrice = totalPrice.add(total);
 
-            OrderProduct orderProduct = OrderProduct.builder()
-                    .qty(qty)
-                    .totalPrice(total)
-                    .pricePerQty(product.getPrice())
-                    .product(product)
-                    .clientId(clientId)
-                    .order(orderSave)
-                    .createdBy(order.getCreatedBy())
-                    .build();
+            OrderProduct orderProduct = OrderProduct.builder().qty(qty).totalPrice(total).pricePerQty(product.getPrice()).product(product).clientId(clientId).order(orderSave).createdBy(order.getCreatedBy()).build();
             orderProductList.add(orderProduct);
         }
 
         orderProductRepository.saveAll(orderProductList);
 
         BigInteger percentage = NumberHelper.getPercentageTotal(req.getTax(), totalPrice);
-        Transaction transaction = Transaction.builder()
-                .order(orderSave)
-                .subTotal(totalPrice)
-                .totalTransaction(percentage.add(totalPrice))
-                .taxPercentage(req.getTax())
-                .clientId(clientId)
-                .createdBy(order.getCreatedBy())
-                .build();
+        Transaction transaction = Transaction.builder().order(orderSave).subTotal(totalPrice).totalTransaction(percentage.add(totalPrice)).taxPercentage(req.getTax()).clientId(clientId).createdBy(order.getCreatedBy()).build();
 
         transactionRepository.save(transaction);
         try {
@@ -326,14 +277,7 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderProduct orderProduct : orderProductList) {
             Product product = orderProduct.getProduct();
-            ResListProduct resProduct = ResListProduct.builder()
-                    .name(orderProduct.getProduct().getName())
-                    .id(orderProduct.getProduct().getId())
-                    .image(product.getImage())
-                    .price(orderProduct.getPricePerQty())
-                    .categoryName(product.getCategory().getName())
-                    .categoryId(product.getCategory().getId())
-                    .build();
+            ResListProduct resProduct = ResListProduct.builder().name(orderProduct.getProduct().getName()).id(orderProduct.getProduct().getId()).image(product.getImage()).price(orderProduct.getPricePerQty()).categoryName(product.getCategory().getName()).categoryId(product.getCategory().getId()).build();
             products.add(resProduct);
         }
 
@@ -345,13 +289,25 @@ public class OrderServiceImpl implements OrderService {
             subTotal = subTotal.add(transaction.getSubTotal());
         }
         try {
-            return ResponseListOrderPublic.builder()
-                    .orderId(order.getId())
-                    .tax(BigInteger.valueOf(11))
-                    .total(totalTransaction)
-                    .products(products)
-                    .subTotal(subTotal)
-                    .build();
+            return ResponseListOrderPublic.builder().orderId(order.getId()).tax(BigInteger.valueOf(11)).total(totalTransaction).products(products).subTotal(subTotal).build();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseEnum requestBill(String code) {
+        Optional<QrCode> findQrCode = qrCodeRepository.findByCode(code);
+        if (findQrCode.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.REQUEST_INVALID.name());
+        }
+
+        try {
+            Order order = findQrCode.get().getOrder();
+            order.setStatus(OrderStatusEnum.REQUEST_BILL);
+            orderRepository.save(order);
+            return ResponseEnum.SUCCESS;
+
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
@@ -376,14 +332,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private ResListOrder buildOrderList(Order order) {
-        return ResListOrder.builder()
-                .id(order.getId())
-                .orderCode(order.getOrderCode())
-                .orderStatus(order.getStatus())
-                .isPayment(order.getIsPayment())
-                .createdDate(order.getCreatedDate())
-                .totalItems(getListTotalItem(order.getId()))
-                .totalTransaction(getListTotalTransaction(order.getId()))
-                .build();
+        return ResListOrder.builder().id(order.getId()).orderCode(order.getOrderCode()).orderStatus(order.getStatus()).isPayment(order.getIsPayment()).createdDate(order.getCreatedDate()).totalItems(getListTotalItem(order.getId())).totalTransaction(getListTotalTransaction(order.getId())).build();
     }
 }
