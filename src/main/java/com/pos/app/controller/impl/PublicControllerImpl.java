@@ -16,7 +16,6 @@ public class PublicControllerImpl implements PublicController {
 
     private final MasterDataService masterDataService;
     private final OrderService orderService;
-    private final OrderController order;
 
     @Override
     public BaseResponse getProductPublic(String code) {
@@ -36,6 +35,12 @@ public class PublicControllerImpl implements PublicController {
     @Override
     public BaseResponse requestBillOrder(String code) {
         return ResponseHelper.createBaseResponse(orderService.requestBill(code));
+    }
+
+    @Override
+    public BaseResponse getListCategoryPublic(String code) {
+
+        return ResponseHelper.createBaseResponse(masterDataService.getListCategoryPublic(code));
     }
 
 

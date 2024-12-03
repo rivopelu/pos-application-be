@@ -1,5 +1,6 @@
 package com.pos.app.service.impl;
 
+import com.github.javafaker.Cat;
 import com.pos.app.entities.Category;
 import com.pos.app.entities.Product;
 import com.pos.app.entities.QrCode;
@@ -96,6 +97,27 @@ public class MasterDataServiceImpl implements MasterDataService {
         String clientId = qrCode.getClient().getId();
         List<Product> products = productRepository.findAllByClientId(clientId);
         return buildResProduct(resListProducts, products);
+    }
+
+    @Override
+    public List<ResListCategory> getListCategoryPublic(String code) {
+        List<ResListCategory> response = new ArrayList<>();
+        Optional<QrCode> qrCode = qrCodeRepository.findByCode(code);
+        if (qrCode.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.REQUEST_INVALID.name());
+        }
+        List<Category> categoryList = categoryRepository.findAllByClientIdOrderBySeqAsc(qrCode.get().getClient().getId());
+        try {
+            for (Category category : categoryList) {
+                ResListCategory resListCategory = new ResListCategory();
+                resListCategory.setName(category.getName());
+                resListCategory.setId(category.getId());
+                response.add(resListCategory);
+            }
+            return response;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
     }
 
     private List<ResListProduct> buildResProduct(List<ResListProduct> resListProducts, List<Product> products) {

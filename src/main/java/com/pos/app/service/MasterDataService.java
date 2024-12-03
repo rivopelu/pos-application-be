@@ -15,4 +15,6 @@ public interface MasterDataService {
     List<ResListProduct> getAllProduct();
 
     List<ResListProduct> getPublicAllProduct(String code);
+
+    List<ResListCategory> getListCategoryPublic(String code);
 }

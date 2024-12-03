@@ -19,4 +19,7 @@ public interface PublicController {
 
     @PatchMapping("v1/request-bill/{code}")
     BaseResponse requestBillOrder(@PathVariable String code);
+
+    @GetMapping("v1/category-list/{code}")
+    BaseResponse getListCategoryPublic(@PathVariable String code);
 }
