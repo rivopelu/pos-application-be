@@ -225,7 +225,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BadRequestException(ResponseEnum.PRODUCTS_NOT_FOUND.name());
         }
 
-        order.setStatus(OrderStatusEnum.IN_PROGRESS);
+        order.setStatus(OrderStatusEnum.PENDING);
         order.setIsPayment(false);
 
 
