@@ -81,9 +81,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderProduct orderProduct = OrderProduct.builder().qty(qty).totalPrice(total).pricePerQty(product.getPrice()).product(product).clientId(clientId).order(orderSave).createdBy(accountService.getCurrentAccountId()).build();
                 orderProductList.add(orderProduct);
             }
-
             orderProductRepository.saveAll(orderProductList);
-
             BigInteger percentage = NumberHelper.getPercentageTotal(req.getTax(), totalPrice);
             Transaction transaction = Transaction.builder().order(orderSave).subTotal(totalPrice).totalTransaction(percentage.add(totalPrice)).taxPercentage(req.getTax()).clientId(clientId).createdBy(accountService.getCurrentAccountId()).build();
 
@@ -96,14 +94,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<ResListOrder> getOrderList(Pageable pageable) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        Page<Order> orderPage = orderRepository.findAllByClientIdOrderByCreatedDateDesc(pageable, accountService.getCurrentClientIdOrNull());
+        Page<Order> orderPage = orderRepository.findAll(pageable);
         List<ResListOrder> resListOrders = new ArrayList<>();
         for (Order order : orderPage.getContent()) {
             resListOrders.add(buildOrderList(order));
         }
         try {
-            return new PageImpl<>(resListOrders, orderPage.getPageable(), orderPage.getTotalPages());
+            return new PageImpl<>(resListOrders, orderPage.getPageable(), orderPage.getTotalElements());
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
