@@ -9,6 +9,7 @@ import com.pos.app.service.MasterDataService;
 import com.pos.app.service.OrderService;
 import com.pos.app.utils.ResponseHelper;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 
 @BaseControllerImpl
 @RequiredArgsConstructor
@@ -41,6 +42,11 @@ public class PublicControllerImpl implements PublicController {
     public BaseResponse getListCategoryPublic(String code) {
 
         return ResponseHelper.createBaseResponse(masterDataService.getListCategoryPublic(code));
+    }
+
+    @Override
+    public BaseResponse checkStatusOrder(String code) {
+        return ResponseHelper.createBaseResponse(orderService.checkStatusOrder(code));
     }
 
 

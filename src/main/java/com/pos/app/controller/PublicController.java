@@ -22,4 +22,7 @@ public interface PublicController {
 
     @GetMapping("v1/category-list/{code}")
     BaseResponse getListCategoryPublic(@PathVariable String code);
+
+    @GetMapping("v1/order/check-status/{code}")
+    BaseResponse checkStatusOrder(@PathVariable String code);
 }

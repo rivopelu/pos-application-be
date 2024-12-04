@@ -6,6 +6,7 @@ import com.pos.app.enums.ResponseEnum;
 import com.pos.app.model.request.ReqCreateOrder;
 import com.pos.app.model.request.ReqCreateOrderViaQrCode;
 import com.pos.app.model.response.ResListOrder;
+import com.pos.app.model.response.ResStatusOrder;
 import com.pos.app.model.response.ResponseIdQr;
 import com.pos.app.model.response.ResponseListOrderPublic;
 import org.springframework.data.domain.Page;
@@ -34,4 +35,5 @@ public interface OrderService {
 
     ResponseEnum requestBill(String code);
 
+    ResStatusOrder checkStatusOrder(String code);
 }

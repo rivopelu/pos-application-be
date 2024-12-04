@@ -8,10 +8,7 @@ import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateOrder;
 import com.pos.app.model.request.ReqCreateOrderViaQrCode;
-import com.pos.app.model.response.ResListOrder;
-import com.pos.app.model.response.ResListProduct;
-import com.pos.app.model.response.ResponseIdQr;
-import com.pos.app.model.response.ResponseListOrderPublic;
+import com.pos.app.model.response.*;
 import com.pos.app.repositories.*;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.OrderService;
@@ -319,6 +316,30 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.save(order);
             return ResponseEnum.SUCCESS;
 
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResStatusOrder checkStatusOrder(String code) {
+
+        Optional<QrCode> findQrCode = qrCodeRepository.findByCode(code);
+
+
+        if (findQrCode.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.REQUEST_INVALID.name());
+        }
+
+        Optional<Order> findOrder = orderRepository.findById(findQrCode.get().getOrder().getId());
+        if (findOrder.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
+        }
+
+        try {
+            return ResStatusOrder.builder()
+                    .status(findOrder.get().getStatus())
+                    .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
