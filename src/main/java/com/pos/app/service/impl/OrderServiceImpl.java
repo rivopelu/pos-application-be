@@ -195,12 +195,26 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseEnum createOrderViaQr(String code, ReqCreateOrderViaQrCode req) {
+
         Optional<QrCode> findQrCode = qrCodeRepository.findByCode(code);
+
         if (findQrCode.isEmpty()) {
             throw new BadRequestException(ResponseEnum.REQUEST_INVALID.name());
         }
+
+
         QrCode qrCode = findQrCode.get();
         String clientId = qrCode.getClient().getId();
+
+        Optional<Order> checkOrder = orderRepository.findById(qrCode.getOrder().getId());
+        if (checkOrder.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
+        }
+
+        if (!checkOrder.get().getStatus().equals(OrderStatusEnum.PENDING)) {
+            throw new BadRequestException(ResponseEnum.REQUEST_INVALID.name());
+        }
+
         Optional<Order> findOrder = orderRepository.findById(qrCode.getOrder().getId());
         if (findOrder.isEmpty()) {
             throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
