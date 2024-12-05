@@ -23,13 +23,16 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 
     BigInteger countByClientId(String clientId);
 
+    Boolean existsAllByClientIdAndIsActiveTrue(String clientId);
+
     @Query(value = "SELECT DATE(FROM_UNIXTIME((o.created_date / 1000) + (:offset * 3600))) AS `date`, COUNT(o.id) AS `count` " +
             "FROM `order` AS o " +
             "WHERE o.created_date BETWEEN UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 7 DAY)) * 1000 " +
             "AND UNIX_TIMESTAMP(CURDATE() + INTERVAL 1 DAY) * 1000 - 1 " +
+            "AND o.client_id  = :clientId" +
             "GROUP BY DATE(FROM_UNIXTIME((o.created_date / 1000) + (:offset * 3600))) " +
             "ORDER BY `date` ASC",
             nativeQuery = true)
-    List<Object[]> getOrderChart(@Param("offset") int offset);
+    List<Object[]> getOrderChart(@Param("offset") int offset, @Param("clientId") String clientId);
 
 }

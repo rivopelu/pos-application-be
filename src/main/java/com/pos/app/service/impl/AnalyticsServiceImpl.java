@@ -55,8 +55,13 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public List<ResponseChartOrder> getAnalyticsChartOrder(Date startDate, Date endDate) {
+        String clientId = accountService.getCurrentClientIdOrNull();
+        Boolean checkValue = orderRepository.existsAllByClientIdAndIsActiveTrue(clientId);
+        if(!checkValue){
+            return  new ArrayList<>();
+        }
         try {
-            List<Object[]> list = orderRepository.getOrderChart(8);
+            List<Object[]> list = orderRepository.getOrderChart(8, clientId);
             List<ResponseChartOrder> responseCharts = new ArrayList<>();
             if (!list.isEmpty()) {
                 for (Object[] obj : list) {
@@ -74,8 +79,14 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public List<ResponseChartOrder> getAnalyticsChartRevenue(Date startDate, Date endDate) {
+        String clientId = accountService.getCurrentClientIdOrNull();
+        Boolean checkValue = transactionRepository.existsAllByClientIdAndIsActiveTrue(clientId);
+
+        if(!checkValue){
+            return  new ArrayList<>();
+        }
         try {
-            List<Object[]> list = transactionRepository.getChartRevenue(8);
+            List<Object[]> list = transactionRepository.getChartRevenue(8, clientId);
             List<ResponseChartOrder> responseCharts = new ArrayList<>();
             if (!list.isEmpty()) {
                 for (Object[] obj : list) {
