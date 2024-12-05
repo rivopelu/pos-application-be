@@ -4,6 +4,7 @@ import com.github.javafaker.Cat;
 import com.pos.app.entities.Category;
 import com.pos.app.entities.Product;
 import com.pos.app.entities.QrCode;
+import com.pos.app.entities.SubscriptionPackage;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.SystemErrorException;
@@ -15,8 +16,10 @@ import com.pos.app.model.response.ResponseListAccount;
 import com.pos.app.repositories.CategoryRepository;
 import com.pos.app.repositories.ProductRepository;
 import com.pos.app.repositories.QrCodeRepository;
+import com.pos.app.repositories.SubscriptionPackageRepository;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.MasterDataService;
+import com.pos.app.utils.EntityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private final AccountService accountService;
     private final ProductRepository productRepository;
     private final QrCodeRepository qrCodeRepository;
+    private final SubscriptionPackageRepository subscriptionPackageRepository;
 
     @Override
     public ResponseEnum createCategory(List<ReqCreateCategory> req) {
@@ -123,8 +127,21 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public ResponseEnum createSubscriptionPackage(List<ReqCreateSubscriptionPackage> req) {
+        String currentAccountId = accountService.getCurrentAccountId();
+        List<SubscriptionPackage> subscriptionPackageList = new ArrayList<>();
+        for (ReqCreateSubscriptionPackage reqCreateSubscriptionPackage : req) {
+            SubscriptionPackage subscriptionPackage = SubscriptionPackage.builder()
+                    .name(reqCreateSubscriptionPackage.getPackageName())
+                    .price(reqCreateSubscriptionPackage.getPrice())
+                    .description(reqCreateSubscriptionPackage.getDescription())
+                    .durationPerDay(reqCreateSubscriptionPackage.getDurationPerDay())
+                    .build();
+            EntityUtils.created(subscriptionPackage, currentAccountId);
+            subscriptionPackageList.add(subscriptionPackage);
+        }
         try {
-            return null;
+            subscriptionPackageRepository.saveAll(subscriptionPackageList);
+            return ResponseEnum.SUCCESS;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
