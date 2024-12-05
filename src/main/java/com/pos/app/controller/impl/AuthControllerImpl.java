@@ -39,6 +39,11 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
+    public BaseResponse signInAdmin(RequestSignIn req) {
+        return ResponseHelper.createBaseResponse(authService.signInAdmin(req));
+    }
+
+    @Override
     public BaseResponse signUp(ReqSignUp req) {
         return ResponseHelper.createBaseResponse(authService.signUp(req));
     }

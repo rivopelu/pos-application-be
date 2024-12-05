@@ -117,6 +117,28 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    @Override
+    public ResponseSignIn signInAdmin(RequestSignIn req) {
+        Optional<Account> findAccount = accountRepository.findByUsername(req.getUsername());
+        if (findAccount.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.SIGN_IN_FAILED.name());
+        }
+        Account account = findAccount.get();
+        if (account.getRole() != UserRole.ADMIN) {
+            throw new BadRequestException(ResponseEnum.SIGN_IN_FAILED.name());
+        }
+
+        try {
+
+            return getSignIn(account, req.getPassword());
+
+        } catch (Exception e) {
+
+            throw new SystemErrorException(e);
+
+        }
+    }
+
     private ResponseSignIn getSignIn(Account account, String password) {
         try {
             if (account.getIsInactive()) {
