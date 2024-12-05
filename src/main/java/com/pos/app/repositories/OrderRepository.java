@@ -29,7 +29,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "FROM `order` AS o " +
             "WHERE o.created_date BETWEEN UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 7 DAY)) * 1000 " +
             "AND UNIX_TIMESTAMP(CURDATE() + INTERVAL 1 DAY) * 1000 - 1 " +
-            "AND o.client_id  = :clientId" +
+            "AND o.client_id  = :clientId " +
             "GROUP BY DATE(FROM_UNIXTIME((o.created_date / 1000) + (:offset * 3600))) " +
             "ORDER BY `date` ASC",
             nativeQuery = true)
