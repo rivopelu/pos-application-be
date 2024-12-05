@@ -15,6 +15,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             "http://localhost:5173",
             "http://localhost:7700",
             "http://localhost:1",
+            "https://pos-application-fe.vercel.app"
     };
 
     public void configureMessageBroker(MessageBrokerRegistry config) {
