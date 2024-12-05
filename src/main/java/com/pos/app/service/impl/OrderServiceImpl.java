@@ -351,7 +351,21 @@ public class OrderServiceImpl implements OrderService {
         if (findOrder.isEmpty()) {
             throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
         }
+
         Order order = findOrder.get();
+        List<OrderProduct> orderProductList = orderProductRepository.findAllByOrderId(order.getId());
+        List<ResListProduct> listProducts = new ArrayList<>();
+
+        for (OrderProduct orderProduct : orderProductList) {
+            ResListProduct res  = ResListProduct.builder()
+                    .name(orderProduct.getProduct().getName())
+                    .id(orderProduct.getProduct().getId())
+                    .image(orderProduct.getProduct().getImage())
+                    .price(orderProduct.getTotalPrice())
+                    .qty(orderProduct.getQty())
+                    .build();
+            listProducts.add(res);
+        }
 
 
         try {
@@ -359,6 +373,7 @@ public class OrderServiceImpl implements OrderService {
                     .code(order.getOrderCode())
                     .id(order.getId())
                     .status(order.getStatus())
+                    .products(listProducts)
                     .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);

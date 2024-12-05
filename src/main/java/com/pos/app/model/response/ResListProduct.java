@@ -28,4 +28,5 @@ public class ResListProduct {
     private String categoryId;
     private String createdBy;
     private Long createdDate;
+    private BigInteger qty;
 }

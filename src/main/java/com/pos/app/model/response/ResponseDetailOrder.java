@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,5 +23,6 @@ public class ResponseDetailOrder {
     private String id;
     private OrderStatusEnum status;
     private BigInteger code;
+    List<ResListProduct> products;
 
 }
