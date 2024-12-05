@@ -6,7 +6,12 @@ import com.pos.app.model.request.RequestTestingPayment;
 import com.pos.app.model.response.SnapPaymentResponse;
 import com.pos.app.service.PaymentService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -31,42 +36,31 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public SnapPaymentResponse testingPayment(RequestTestingPayment req) {
         try {
-            URL url = new URL(mtApiUrl + "/snap/v1/transactions");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
+            String url = mtApiUrl + "/snap/v1/transactions";
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
             String authString = mtServerKey + ":";
             String encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes());
-            connection.setRequestProperty("Authorization", "Basic " + encodedAuthString);
+            headers.set("Authorization", "Basic " + encodedAuthString);
 
             Map<String, Object> body = new HashMap<>();
             Map<String, Object> fields = new HashMap<>();
             fields.put("order_id", UUID.randomUUID().toString());
             fields.put("gross_amount", req.getPrice());
             body.put("transaction_details", fields);
-            String requestBody = new ObjectMapper().writeValueAsString(body);
 
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-            int responseCode = connection.getResponseCode();
-            StringBuilder response = new StringBuilder();
+            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(
-                    responseCode >= 200 && responseCode < 300
-                            ? connection.getInputStream()
-                            : connection.getErrorStream()))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    response.append(line);
-                }
-            }
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<SnapPaymentResponse> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    SnapPaymentResponse.class
+            );
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(response.toString(), SnapPaymentResponse.class);
+            return response.getBody();
 
         } catch (Exception e) {
             throw new SystemErrorException(e);
