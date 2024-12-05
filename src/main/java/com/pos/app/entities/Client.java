@@ -42,7 +42,7 @@ public class Client {
     private String updatedBy;
 
     @Column(name = "is_active_subscription")
-    private Boolean isActionSubscription;
+    private Boolean isActiveSubscription;
 
 
     @Column(name = "is_active")

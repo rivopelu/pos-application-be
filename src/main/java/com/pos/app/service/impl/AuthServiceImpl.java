@@ -1,6 +1,7 @@
 package com.pos.app.service.impl;
 
 import com.pos.app.entities.Account;
+import com.pos.app.entities.Client;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.enums.UserRole;
 import com.pos.app.exception.BadRequestException;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.Optional;
 
@@ -41,10 +43,26 @@ public class AuthServiceImpl implements AuthService {
         if (findAccount.isEmpty()) {
             throw new BadRequestException(ResponseEnum.SIGN_IN_FAILED.name());
         }
+
+
         EnumSet<UserRole> allowedRoles = EnumSet.of(UserRole.STAFF, UserRole.ADMIN);
         if (!allowedRoles.contains(findAccount.get().getRole())) {
             throw new BadRequestException(ResponseEnum.SIGN_IN_FAILED.name());
         }
+
+        Client client = findAccount.get().getClient();
+        if (client == null) {
+            throw new BadRequestException(ResponseEnum.CLIENT_NOT_FOUND.name());
+        }
+
+        if (!client.getIsActiveSubscription()) {
+            throw new BadRequestException(ResponseEnum.SUBSCRIPTION_EXPIRED.name());
+        }
+
+        if (client.getSubscriptionExpiredDate() < new Date().getTime()) {
+            throw new BadRequestException(ResponseEnum.SUBSCRIPTION_EXPIRED.name());
+        }
+
         try {
 
             return getSignIn(findAccount.get(), req.getPassword());
