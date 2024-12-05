@@ -104,9 +104,10 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     }
 
     @Override
-    public Page getReportSales(Pageable pageable, Date startDate, Date endDate) {
+    public Page<ResponseSalesReport> getReportSales(Pageable pageable, Date startDate, Date endDate) {
+        String clientId = accountService.getCurrentClientIdOrNull();
         List<ResponseSalesReport> responseSalesReportList = new ArrayList<>();
-        Page<Object[]> orderProductPage = orderProductRepository.getSalesReport(pageable);
+        Page<Object[]> orderProductPage = orderProductRepository.getSalesReport(pageable, clientId);
         try {
             for (Object[] obj : orderProductPage.getContent()) {
                 ResponseSalesReport responseSalesReport = ResponseSalesReport.builder()
@@ -130,7 +131,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public ResponseEntity<byte[]> downloadReport() {
-        List<Object[]> orderProductPage = orderProductRepository.getSalesReport();
+        String clientId = accountService.getCurrentClientIdOrNull();
+        List<Object[]> orderProductPage = orderProductRepository.getSalesReport(clientId);
         try {
             String[] headers = {"Product ID", "Product name", "order ID", "qty", "price per qty", "total price", "total transaction", "tax", "date"};
             String[][] data = new String[orderProductPage.size()][headers.length];

@@ -1,6 +1,5 @@
 package com.pos.app.repositories;
 
-import com.pos.app.entities.Order;
 import com.pos.app.entities.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

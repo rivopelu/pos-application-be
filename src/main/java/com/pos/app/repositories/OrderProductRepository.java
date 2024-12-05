@@ -26,17 +26,19 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Stri
             "join Product  as p on op.product.id = p.id " +
             "join Order as o on o.id = op.order.id " +
             "join Transaction  as t on t.order.id = o.id " +
+            "where op.clientId = :clientId " +
             "order by op.createdDate desc ")
-    Page<Object[]> getSalesReport(Pageable pageable);
+    Page<Object[]> getSalesReport(Pageable pageable, String clientId);
 
     @Query(value = "select p.id, p.name," +
             " o.id, op.qty, op.pricePerQty," +
             " op.totalPrice, t.totalTransaction, " +
-            "t.taxPercentage, op.createdDate" +
-            " from OrderProduct as op " +
+            "t.taxPercentage, op.createdDate " +
+            "from OrderProduct as op " +
             "join Product  as p on op.product.id = p.id " +
             "join Order as o on o.id = op.order.id " +
             "join Transaction  as t on t.order.id = o.id " +
+            "where op.clientId = :clientId " +
             "order by op.createdDate desc ")
-    List<Object[]> getSalesReport();
+    List<Object[]> getSalesReport(String clientId);
 }

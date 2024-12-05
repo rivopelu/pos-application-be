@@ -18,7 +18,7 @@ public interface AnalyticsService {
 
     List<ResponseChartOrder> getAnalyticsChartRevenue(Date startDate, Date endDate);
 
-    Page getReportSales(Pageable pageable, Date startDate, Date endDate);
+    Page<ResponseSalesReport> getReportSales(Pageable pageable, Date startDate, Date endDate);
 
     ResponseEntity<byte[]> downloadReport();
 
