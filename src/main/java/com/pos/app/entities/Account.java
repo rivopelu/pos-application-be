@@ -99,6 +99,7 @@ public class Account implements UserDetails {
         }
         this.createdDate = new Date().getTime();
         this.updatedDate = new Date().getTime();
+        this.isInactive = false;
     }
 
     @PreUpdate

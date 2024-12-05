@@ -17,7 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     @Query("select o.orderCode from Order as o where o.clientId = :clientId order by  o.createdDate desc limit 1 ")
     BigInteger findLatestCode(String clientId);
 
-    Page<Order> findByClientIdOrderByCreatedDateDesc(Pageable pageable, String clientId);
+    Page<Order> findByClientIdAndIsActiveTrueOrderByCreatedDateDesc(Pageable pageable, String clientId);
 
     List<Order> findAllByClientIdAndStatusOrderByUpdatedDateAsc(String clientId, OrderStatusEnum status);
 

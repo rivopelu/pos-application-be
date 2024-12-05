@@ -94,7 +94,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<ResListOrder> getOrderList(Pageable pageable) {
-        Page<Order> orderPage = orderRepository.findAll(pageable);
+        String clientId = accountService.getCurrentClientId();
+        Page<Order> orderPage = orderRepository.findByClientIdAndIsActiveTrueOrderByCreatedDateDesc(pageable, clientId);
         List<ResListOrder> resListOrders = new ArrayList<>();
         for (Order order : orderPage.getContent()) {
             resListOrders.add(buildOrderList(order));
