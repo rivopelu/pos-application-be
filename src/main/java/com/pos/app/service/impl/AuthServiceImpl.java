@@ -72,15 +72,16 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEnum signUp(ReqSignUp req) {
 
-        Optional<Account> findAccount = accountRepository.findByEmail(req.getEmail());
+       Boolean checkAccount = accountRepository.existsAccountByEmail(req.getEmail());
 
-        if (findAccount.isEmpty()) {
-            throw new BadRequestException(ResponseEnum.SIGN_IN_FAILED.name());
+        if (checkAccount) {
+            throw new BadRequestException(ResponseEnum.EMAIL_ALREADY_EXIST.name());
         }
 
         String encode = passwordEncoder.encode(req.getPassword());
         Account account = Account.builder()
                 .email(req.getEmail())
+                .name(req.getName())
                 .username(req.getUsername())
                 .role(UserRole.ADMIN)
                 .avatar(accountService.createAvatar(req.getName()))
