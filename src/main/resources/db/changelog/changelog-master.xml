@@ -23,4 +23,5 @@
     <include file="classpath:db/changelog/1.4.1_add_column_updated_by.xml"/>
     <include file="classpath:db/changelog/1.5.0_add_column_is_active.xml"/>
     <include file="classpath:db/changelog/1.5.1_add_column_email_account.xml"/>
+    <include file="classpath:db/changelog/1.5.2_add_column_is_active_subscription.xml"/>
 </databaseChangeLog>

@@ -41,9 +41,15 @@ public class Client {
     @Column(name = "updated_by")
     private String updatedBy;
 
+    @Column(name = "is_active_subscription")
+    private Boolean isActionSubscription;
+
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @Column(name = "subscription_expired_date")
+    private Long subscriptionExpiredDate;
 
 
     @ManyToMany
