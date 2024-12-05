@@ -28,4 +28,7 @@ public interface OrderController {
     @GetMapping("v1/generate-qr-order")
     BaseResponse generateQROrder();
 
+    @GetMapping("v1/detail/{id}")
+    BaseResponse getDetailOrder(@PathVariable("id") String id);
+
 }

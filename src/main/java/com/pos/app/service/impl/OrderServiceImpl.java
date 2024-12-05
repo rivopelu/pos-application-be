@@ -343,6 +343,28 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public ResponseDetailOrder getDetailOrder(String id) {
+
+        Optional<Order> findOrder = orderRepository.findById(id);
+
+        if (findOrder.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
+        }
+        Order order = findOrder.get();
+
+
+        try {
+            return ResponseDetailOrder.builder()
+                    .code(order.getOrderCode())
+                    .id(order.getId())
+                    .status(order.getStatus())
+                    .build();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
     private BigInteger getListTotalTransaction(String orderId) {
         List<Transaction> transactionList = transactionRepository.findAllByOrderId(orderId);
         BigInteger totalTransaction = BigInteger.ZERO;

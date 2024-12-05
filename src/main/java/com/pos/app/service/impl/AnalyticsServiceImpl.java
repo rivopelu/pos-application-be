@@ -57,8 +57,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     public List<ResponseChartOrder> getAnalyticsChartOrder(Date startDate, Date endDate) {
         String clientId = accountService.getCurrentClientIdOrNull();
         Boolean checkValue = orderRepository.existsAllByClientIdAndIsActiveTrue(clientId);
-        if(!checkValue){
-            return  new ArrayList<>();
+        if (!checkValue) {
+            return new ArrayList<>();
         }
         try {
             List<Object[]> list = orderRepository.getOrderChart(8, clientId);
@@ -82,8 +82,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         String clientId = accountService.getCurrentClientIdOrNull();
         Boolean checkValue = transactionRepository.existsAllByClientIdAndIsActiveTrue(clientId);
 
-        if(!checkValue){
-            return  new ArrayList<>();
+        if (!checkValue) {
+            return new ArrayList<>();
         }
         try {
             List<Object[]> list = transactionRepository.getChartRevenue(8, clientId);
@@ -166,10 +166,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             for (String[] row : data) {
                 writer.println(String.join(",", row));
             }
-
             writer.flush();
             writer.close();
-
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("Content-Disposition", "attachment; filename=data.csv");
 

@@ -44,4 +44,9 @@ public class OrderControllerImpl implements OrderController {
     public BaseResponse generateQROrder() {
         return ResponseHelper.createBaseResponse(orderService.generateQROrder());
     }
+
+    @Override
+    public BaseResponse getDetailOrder(String id) {
+        return ResponseHelper.createBaseResponse(orderService.getDetailOrder(id));
+    }
 }
