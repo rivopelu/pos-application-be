@@ -8,6 +8,7 @@ import com.pos.app.enums.UserRole;
 import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
+import com.pos.app.model.request.ReqSignUp;
 import com.pos.app.model.request.RequestSignIn;
 import com.pos.app.model.response.BaseResponse;
 import com.pos.app.model.response.ResponseSignIn;
@@ -38,8 +39,12 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public String ping() {
+    public BaseResponse signUp(ReqSignUp req) {
+        return ResponseHelper.createBaseResponse(authService.signUp(req));
+    }
 
+    @Override
+    public String ping() {
         simpMessagingTemplate.convertAndSend("/topic/live/order/" + "607607bf-eb4a-4ab1-85cf-2fc8f09b4f03", 1222);
         System.out.println("SUCCESS");
         return "PENG";

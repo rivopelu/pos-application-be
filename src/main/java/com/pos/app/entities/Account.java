@@ -32,6 +32,9 @@ public class Account implements UserDetails {
     @Column(name = "username")
     private String username;
 
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "password")
     private String password;
 
@@ -41,6 +44,7 @@ public class Account implements UserDetails {
 
     @Column(name = "created_date")
     private Long createdDate;
+
     @Column(name = "updated_date")
     private Long updatedDate;
 

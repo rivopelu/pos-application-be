@@ -15,4 +15,5 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     Page<Account> findAllByClientId(String clientId, Pageable pageable);
 
+    Optional<Account> findByEmail(String email);
 }
