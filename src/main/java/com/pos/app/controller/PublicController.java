@@ -25,4 +25,7 @@ public interface PublicController {
 
     @GetMapping("v1/order/check-status/{code}")
     BaseResponse checkStatusOrder(@PathVariable String code);
+
+    @GetMapping("v1/subscription-package/list")
+    BaseResponse getListSubscriptionPackagePublic();
 }

@@ -5,6 +5,7 @@ import com.pos.app.model.request.ReqCreateCategory;
 import com.pos.app.model.request.ReqCreateSubscriptionPackage;
 import com.pos.app.model.response.ResListCategory;
 import com.pos.app.model.response.ResListProduct;
+import com.pos.app.model.response.ResponseListSubscriptionPackage;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface MasterDataService {
     List<ResListCategory> getListCategoryPublic(String code);
 
     ResponseEnum createSubscriptionPackage(List<ReqCreateSubscriptionPackage> req);
+
+    List<ResponseListSubscriptionPackage> getListSubscriptionPackagePublic();
 }

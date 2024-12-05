@@ -13,6 +13,7 @@ import com.pos.app.model.request.ReqCreateSubscriptionPackage;
 import com.pos.app.model.response.ResListCategory;
 import com.pos.app.model.response.ResListProduct;
 import com.pos.app.model.response.ResponseListAccount;
+import com.pos.app.model.response.ResponseListSubscriptionPackage;
 import com.pos.app.repositories.CategoryRepository;
 import com.pos.app.repositories.ProductRepository;
 import com.pos.app.repositories.QrCodeRepository;
@@ -142,6 +143,31 @@ public class MasterDataServiceImpl implements MasterDataService {
         try {
             subscriptionPackageRepository.saveAll(subscriptionPackageList);
             return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public List<ResponseListSubscriptionPackage> getListSubscriptionPackagePublic() {
+        List<SubscriptionPackage> subscriptionPackageList = subscriptionPackageRepository.findAllByActiveIsTrue();
+        List<ResponseListSubscriptionPackage> responseList = new ArrayList<>();
+
+        try {
+
+
+            for (SubscriptionPackage subscriptionPackage : subscriptionPackageList) {
+                ResponseListSubscriptionPackage responseListSubscriptionPackage = ResponseListSubscriptionPackage.builder()
+                        .id(subscriptionPackage.getId())
+                        .packageName(subscriptionPackage.getName())
+                        .price(subscriptionPackage.getPrice())
+                        .durationPerDay(subscriptionPackage.getDurationPerDay())
+                        .description(subscriptionPackage.getDescription())
+                        .build();
+                responseList.add(responseListSubscriptionPackage);
+            }
+            return responseList;
+
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

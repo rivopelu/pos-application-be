@@ -49,5 +49,10 @@ public class PublicControllerImpl implements PublicController {
         return ResponseHelper.createBaseResponse(orderService.checkStatusOrder(code));
     }
 
+    @Override
+    public BaseResponse getListSubscriptionPackagePublic() {
+        return ResponseHelper.createBaseResponse(masterDataService.getListSubscriptionPackagePublic());
+    }
+
 
 }

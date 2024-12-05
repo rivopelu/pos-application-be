@@ -26,4 +26,6 @@ public interface MasterDataController {
     @SuperAdminAccess
     @PostMapping("v1/subscription-package/create")
     BaseResponse createSubscriptionPackage(@RequestBody List<ReqCreateSubscriptionPackage> req);
+
+
 }

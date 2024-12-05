@@ -3,5 +3,8 @@ package com.pos.app.repositories;
 import com.pos.app.entities.SubscriptionPackage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SubscriptionPackageRepository extends JpaRepository<SubscriptionPackage, Integer> {
+import java.util.List;
+
+public interface SubscriptionPackageRepository extends JpaRepository<SubscriptionPackage, String> {
+    List<SubscriptionPackage> findAllByActiveIsTrue();
 }
