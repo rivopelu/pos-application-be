@@ -2,6 +2,7 @@ package com.pos.app.service;
 
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.model.request.ReqCreateCategory;
+import com.pos.app.model.request.ReqCreateSubscriptionPackage;
 import com.pos.app.model.response.ResListCategory;
 import com.pos.app.model.response.ResListProduct;
 
@@ -17,4 +18,6 @@ public interface MasterDataService {
     List<ResListProduct> getPublicAllProduct(String code);
 
     List<ResListCategory> getListCategoryPublic(String code);
+
+    ResponseEnum createSubscriptionPackage(List<ReqCreateSubscriptionPackage> req);
 }

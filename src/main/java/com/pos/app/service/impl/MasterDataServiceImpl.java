@@ -8,6 +8,7 @@ import com.pos.app.enums.ResponseEnum;
 import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateCategory;
+import com.pos.app.model.request.ReqCreateSubscriptionPackage;
 import com.pos.app.model.response.ResListCategory;
 import com.pos.app.model.response.ResListProduct;
 import com.pos.app.model.response.ResponseListAccount;
@@ -115,6 +116,15 @@ public class MasterDataServiceImpl implements MasterDataService {
                 response.add(resListCategory);
             }
             return response;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseEnum createSubscriptionPackage(List<ReqCreateSubscriptionPackage> req) {
+        try {
+            return null;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
