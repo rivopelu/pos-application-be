@@ -45,6 +45,8 @@ public class QrCode {
     @Column(name = "updated_by")
     private String updatedBy;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
 
     @PrePersist
     public void prePersist() {
@@ -53,6 +55,8 @@ public class QrCode {
         }
         this.createdDate = new Date().getTime();
         this.updatedDate = new Date().getTime();
+        this.isActive = true;
+
     }
 
     @PreUpdate

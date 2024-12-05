@@ -50,6 +50,9 @@ public class Transaction {
     private String clientId;
 
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
     @PrePersist
     public void prePersist() {
         if (this.id == null) {
@@ -57,6 +60,8 @@ public class Transaction {
         }
         this.createdDate = new Date().getTime();
         this.updatedDate = new Date().getTime();
+        this.isActive = true;
+
     }
 
     @PreUpdate

@@ -42,6 +42,10 @@ public class Client {
     private String updatedBy;
 
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+
     @ManyToMany
     @JoinTable(name = "client_account", joinColumns = @JoinColumn(name = "client_id"),
             inverseJoinColumns = @JoinColumn(name = "account_id"))
@@ -55,6 +59,8 @@ public class Client {
         }
         this.createdDate = new Date().getTime();
         this.updatedDate = new Date().getTime();
+        this.isActive = true;
+
     }
 
     @PreUpdate

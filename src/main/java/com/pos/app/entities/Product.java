@@ -50,6 +50,8 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
 
     @PrePersist
     public void prePersist() {
@@ -58,6 +60,8 @@ public class Product {
         }
         this.createdDate = new Date().getTime();
         this.updatedDate = new Date().getTime();
+        this.isActive = true;
+
     }
 
     @PreUpdate
