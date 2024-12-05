@@ -72,10 +72,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEnum signUp(ReqSignUp req) {
 
-       Boolean checkAccount = accountRepository.existsAccountByEmail(req.getEmail());
+        Boolean checkEmail = accountRepository.existsAccountByEmail(req.getEmail());
+        Boolean checkUsername = accountRepository.existsAccountByUsername(req.getUsername());
 
-        if (checkAccount) {
+        if (checkEmail) {
             throw new BadRequestException(ResponseEnum.EMAIL_ALREADY_EXIST.name());
+        }
+        if (checkUsername) {
+            throw new BadRequestException(ResponseEnum.USERNAME_ALREADY_EXIST.name());
         }
 
         String encode = passwordEncoder.encode(req.getPassword());

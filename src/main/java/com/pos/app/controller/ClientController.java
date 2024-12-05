@@ -11,4 +11,8 @@ public interface ClientController {
 
     @PostMapping("v1/new")
     BaseResponse createClient(@RequestBody ReqCreateClient req);
+
+    @PostMapping("v1/create-by-user")
+    BaseResponse createClientByUser(@RequestBody ReqCreateClient req);
+
 }

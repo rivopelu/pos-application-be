@@ -18,4 +18,9 @@ public class ClientControllerImpl implements ClientController {
     public BaseResponse createClient(ReqCreateClient req) {
         return ResponseHelper.createBaseResponse(clientService.createClient(req));
     }
+
+    @Override
+    public BaseResponse createClientByUser(ReqCreateClient req) {
+        return ResponseHelper.createBaseResponse(clientService.createClientByUser(req));
+    }
 }

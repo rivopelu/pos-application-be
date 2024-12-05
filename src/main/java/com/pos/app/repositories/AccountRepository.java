@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, String> {
     Optional<Account> findByUsername(String username);
 
-    boolean existsAccountByUsername(String username);
+    Boolean existsAccountByUsername(String username);
 
     Page<Account> findAllByClientId(String clientId, Pageable pageable);
 
