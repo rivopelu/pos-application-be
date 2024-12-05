@@ -13,6 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final String[] data = {
             "http://localhost:5173",
+            "http://localhost:7700",
             "http://localhost:1",
     };
 
