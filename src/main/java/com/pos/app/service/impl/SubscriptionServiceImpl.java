@@ -5,6 +5,7 @@ import com.pos.app.entities.Client;
 import com.pos.app.entities.SubscriptionPackage;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.exception.BadRequestException;
+import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqPaymentSubscription;
 import com.pos.app.model.response.ResponsePaymentToken;
 import com.pos.app.repositories.SubscriptionPackageRepository;
@@ -39,7 +40,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
 
 
+        try {
+            return null;
 
-        return null;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
     }
 }

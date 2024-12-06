@@ -18,7 +18,7 @@ import java.math.BigInteger;
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ReqPaymentObject {
-
+    private TransactionDetail transactionDetail;
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

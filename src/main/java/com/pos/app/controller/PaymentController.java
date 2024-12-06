@@ -1,6 +1,7 @@
 package com.pos.app.controller;
 
 import com.pos.app.annotations.BaseController;
+import com.pos.app.model.request.ReqPaymentSubscription;
 import com.pos.app.model.request.RequestTestingPayment;
 import com.pos.app.model.response.BaseResponse;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,7 @@ public interface PaymentController {
     BaseResponse testingPayment(@RequestBody RequestTestingPayment req);
 
     @PostMapping("v1/subscription")
-    BaseResponse paymentSubscription(@RequestBody RequestTestingPayment req);
+    BaseResponse paymentSubscription(@RequestBody ReqPaymentSubscription req);
 
 
 }
