@@ -2,9 +2,10 @@ package com.pos.app.service;
 
 import com.pos.app.model.request.ReqPaymentSubscription;
 import com.pos.app.model.response.ResponsePaymentToken;
+import com.pos.app.model.response.SnapPaymentResponse;
 
 public interface SubscriptionService {
 
-    ResponsePaymentToken paymentSubscription(ReqPaymentSubscription subscription);
+    SnapPaymentResponse paymentSubscription(ReqPaymentSubscription subscription);
 
 }

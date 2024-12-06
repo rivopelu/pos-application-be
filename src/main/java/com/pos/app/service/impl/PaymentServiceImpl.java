@@ -1,6 +1,7 @@
 package com.pos.app.service.impl;
 
 import com.pos.app.exception.SystemErrorException;
+import com.pos.app.model.request.ReqPaymentObject;
 import com.pos.app.model.request.RequestTestingPayment;
 import com.pos.app.model.response.SnapPaymentResponse;
 import com.pos.app.service.PaymentService;
@@ -55,6 +56,40 @@ public class PaymentServiceImpl implements PaymentService {
 
             return response.getBody();
 
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public SnapPaymentResponse createPayment(ReqPaymentObject req) {
+        String url = mtApiUrl + "/snap/v1/transactions";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        String authString = mtServerKey + ":";
+        String encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes());
+        headers.set("Authorization", "Basic " + encodedAuthString);
+
+        Map<String, Object> body = new HashMap<>();
+        Map<String, Object> fields = new HashMap<>();
+        fields.put("order_id", req.getTransactionDetail().getOrderId());
+        fields.put("gross_amount", req.getTransactionDetail().getGrossAmount());
+        body.put("transaction_details", fields);
+
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<SnapPaymentResponse> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                SnapPaymentResponse.class
+        );
+
+        try {
+            return response.getBody();
+            
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

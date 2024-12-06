@@ -8,11 +8,14 @@ import com.pos.app.enums.ResponseEnum;
 import com.pos.app.enums.SubscriptionOrderStatusEnum;
 import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.SystemErrorException;
+import com.pos.app.model.request.ReqPaymentObject;
 import com.pos.app.model.request.ReqPaymentSubscription;
 import com.pos.app.model.response.ResponsePaymentToken;
+import com.pos.app.model.response.SnapPaymentResponse;
 import com.pos.app.repositories.SubscriptionOrderRepository;
 import com.pos.app.repositories.SubscriptionPackageRepository;
 import com.pos.app.service.AccountService;
+import com.pos.app.service.PaymentService;
 import com.pos.app.service.SubscriptionService;
 import com.pos.app.utils.EntityUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +30,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubscriptionPackageRepository subscriptionPackageRepository;
     private final AccountService accountService;
     private final SubscriptionOrderRepository subscriptionOrderRepository;
+    private final PaymentService paymentService;
 
     @Override
-    public ResponsePaymentToken paymentSubscription(ReqPaymentSubscription subscription) {
+    public SnapPaymentResponse paymentSubscription(ReqPaymentSubscription subscription) {
 
         Optional<SubscriptionPackage> findPackage = subscriptionPackageRepository.findById(subscription.getPackageId());
 
@@ -56,11 +60,18 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         SubscriptionOrder order = subscriptionOrderRepository.save(buildOrder);
 
 
+        ReqPaymentObject.TransactionDetail transactionDetail = ReqPaymentObject.TransactionDetail.builder()
+                .grossAmount(order.getTotalTransaction())
+                .orderId(order.getId())
+                .build();
+
+
+        ReqPaymentObject paymentRequest = ReqPaymentObject.builder()
+                .transactionDetail(transactionDetail)
+                .build();
+
         try {
-            return ResponsePaymentToken.builder()
-                    .token(order.getId())
-                    .url(order.getTotalTransaction().toString())
-                    .build();
+            return paymentService.createPayment(paymentRequest);
 
         } catch (Exception e) {
             throw new SystemErrorException(e);
