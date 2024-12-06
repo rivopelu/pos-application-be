@@ -49,23 +49,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new BadRequestException(ResponseEnum.CLIENT_NOT_FOUND.name());
         }
 
-        SubscriptionOrder buildOrder = SubscriptionOrder.builder()
-                .account(account)
-                .client(client)
-                .subscriptionPackage(findPackage.get())
-                .status(SubscriptionOrderStatusEnum.CREATED)
-                .totalTransaction(findPackage.get().getPrice())
-                .build();
+        SubscriptionOrder buildOrder = SubscriptionOrder.builder().account(account).client(client).subscriptionPackage(findPackage.get()).status(SubscriptionOrderStatusEnum.CREATED).totalTransaction(findPackage.get().getPrice()).build();
         EntityUtils.created(buildOrder, account.getId());
 
         SubscriptionOrder order = subscriptionOrderRepository.save(buildOrder);
 
 
-        ReqPaymentObject paymentRequest = ReqPaymentObject.builder()
-                .transactionDetail(generateTransactionDetail(order))
-                .customersDetails(generateCustomerDetail(account))
-                .itemsDetail(generateItemsDetail(findPackage.get()))
-                .build();
+        ReqPaymentObject paymentRequest = ReqPaymentObject.builder().transactionDetail(generateTransactionDetail(order)).customersDetails(generateCustomerDetail(account)).itemsDetail(generateItemsDetail(findPackage.get())).build();
 
         try {
             return paymentService.createPayment(paymentRequest);
@@ -75,25 +65,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     private ReqPaymentObject.TransactionDetail generateTransactionDetail(SubscriptionOrder order) {
-        return ReqPaymentObject.TransactionDetail.builder()
-                .grossAmount(order.getTotalTransaction())
-                .orderId(order.getId())
-                .build();
+        return ReqPaymentObject.TransactionDetail.builder().grossAmount(order.getTotalTransaction()).orderId(order.getId()).build();
     }
 
     private ReqPaymentObject.CustomersDetails generateCustomerDetail(Account account) {
-        return ReqPaymentObject.CustomersDetails.builder()
-                .firstName(account.getName())
-                .email(account.getEmail())
-                .build();
+        return ReqPaymentObject.CustomersDetails.builder().firstName(account.getName()).email(account.getEmail()).build();
     }
 
     private ReqPaymentObject.ItemsDetail generateItemsDetail(SubscriptionPackage subscriptionPackage) {
-        return ReqPaymentObject.ItemsDetail.builder()
-                .name(subscriptionPackage.getName())
-                .id(subscriptionPackage.getId())
-                .price(subscriptionPackage.getPrice())
-                .quantity(BigInteger.ONE)
-                .build();
+        return ReqPaymentObject.ItemsDetail.builder().name(subscriptionPackage.getName()).id(subscriptionPackage.getId()).price(subscriptionPackage.getPrice()).quantity(BigInteger.ONE).build();
     }
 }
