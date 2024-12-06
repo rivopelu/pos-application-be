@@ -1,5 +1,6 @@
 package com.pos.app.service.impl;
 
+import com.pos.app.constants.UrlSting;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqPaymentObject;
 import com.pos.app.model.request.RequestTestingPayment;
@@ -13,10 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.math.BigInteger;
+import java.util.*;
+
+import static com.pos.app.constants.UrlSting.GET_PAYMENT_SNAP_MID_TRANS_URL;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -63,7 +64,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public SnapPaymentResponse createPayment(ReqPaymentObject req) {
-        String url = mtApiUrl + "/snap/v1/transactions";
+        String url = mtApiUrl + GET_PAYMENT_SNAP_MID_TRANS_URL;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -72,12 +73,13 @@ public class PaymentServiceImpl implements PaymentService {
         headers.set("Authorization", "Basic " + encodedAuthString);
 
         Map<String, Object> body = new HashMap<>();
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("order_id", req.getTransactionDetail().getOrderId());
-        fields.put("gross_amount", req.getTransactionDetail().getGrossAmount());
-        body.put("transaction_details", fields);
+
+        body.put("transaction_details", generateTransactionDetail(req.getTransactionDetail()));
+        body.put("item_detail", generateItemsDetail(req.getItemsDetail()));
+        body.put("customer_details", generateCustomersDetail(req.getCustomersDetails()));
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<SnapPaymentResponse> response = restTemplate.exchange(
@@ -89,9 +91,40 @@ public class PaymentServiceImpl implements PaymentService {
 
         try {
             return response.getBody();
-            
+
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
     }
+
+
+    private Map<String, Object> generateTransactionDetail(ReqPaymentObject.TransactionDetail detail) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("order_id", detail.getOrderId());
+        data.put("gross_amount", detail.getGrossAmount());
+        return data;
+    }
+
+
+    private List<Map<String, Object>> generateItemsDetail(ReqPaymentObject.ItemsDetail detail) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", detail.getId());
+        data.put("price", detail.getPrice());
+        data.put("name", detail.getName());
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        result.add(data);
+
+        return result;
+    }
+
+
+    private Map<String, Object> generateCustomersDetail(ReqPaymentObject.CustomersDetails detail) {
+        Map<String, Object> customerDetails = new HashMap<>();
+        customerDetails.put("first_name", detail.getFirstName());
+        customerDetails.put("email", detail.getEmail());
+        return customerDetails;
+    }
 }
+
+

@@ -21,6 +21,7 @@ import com.pos.app.utils.EntityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.Optional;
 
 @Service
@@ -60,21 +61,39 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         SubscriptionOrder order = subscriptionOrderRepository.save(buildOrder);
 
 
-        ReqPaymentObject.TransactionDetail transactionDetail = ReqPaymentObject.TransactionDetail.builder()
-                .grossAmount(order.getTotalTransaction())
-                .orderId(order.getId())
-                .build();
-
-
         ReqPaymentObject paymentRequest = ReqPaymentObject.builder()
-                .transactionDetail(transactionDetail)
+                .transactionDetail(generateTransactionDetail(order))
+                .customersDetails(generateCustomerDetail(account))
+                .itemsDetail(generateItemsDetail(findPackage.get()))
                 .build();
 
         try {
             return paymentService.createPayment(paymentRequest);
-
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    private ReqPaymentObject.TransactionDetail generateTransactionDetail(SubscriptionOrder order) {
+        return ReqPaymentObject.TransactionDetail.builder()
+                .grossAmount(order.getTotalTransaction())
+                .orderId(order.getId())
+                .build();
+    }
+
+    private ReqPaymentObject.CustomersDetails generateCustomerDetail(Account account) {
+        return ReqPaymentObject.CustomersDetails.builder()
+                .firstName(account.getName())
+                .email(account.getEmail())
+                .build();
+    }
+
+    private ReqPaymentObject.ItemsDetail generateItemsDetail(SubscriptionPackage subscriptionPackage) {
+        return ReqPaymentObject.ItemsDetail.builder()
+                .name(subscriptionPackage.getName())
+                .id(subscriptionPackage.getId())
+                .price(subscriptionPackage.getPrice())
+                .quantity(BigInteger.ONE)
+                .build();
     }
 }

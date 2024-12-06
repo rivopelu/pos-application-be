@@ -19,6 +19,9 @@ import java.math.BigInteger;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ReqPaymentObject {
     private TransactionDetail transactionDetail;
+    private ItemsDetail itemsDetail;
+    private CustomersDetails customersDetails;
+
 
     @Data
     @Builder
@@ -30,6 +33,31 @@ public class ReqPaymentObject {
         private String orderId;
         private BigInteger grossAmount;
 
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonSerialize
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class ItemsDetail {
+        private String id;
+        private BigInteger price;
+        private BigInteger quantity;
+        private String name;
+
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonSerialize
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class CustomersDetails {
+        private String firstName;
+        private String email;
     }
 
 }
