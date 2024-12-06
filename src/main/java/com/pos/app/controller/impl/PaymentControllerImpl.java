@@ -19,4 +19,9 @@ public class PaymentControllerImpl implements PaymentController {
         return ResponseHelper.createBaseResponse(paymentService.testingPayment(req));
     }
 
+    @Override
+    public BaseResponse paymentSubscription(RequestTestingPayment req) {
+        return ResponseHelper.createBaseResponse();
+    }
+
 }

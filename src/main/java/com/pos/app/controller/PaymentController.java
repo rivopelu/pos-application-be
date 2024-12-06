@@ -12,4 +12,8 @@ public interface PaymentController {
     @PostMapping("v1/test")
     BaseResponse testingPayment(@RequestBody RequestTestingPayment req);
 
+    @PostMapping("v1/subscription")
+    BaseResponse paymentSubscription(@RequestBody RequestTestingPayment req);
+
+
 }
