@@ -4,9 +4,11 @@ import com.pos.app.annotations.BaseControllerImpl;
 import com.pos.app.controller.OrderController;
 import com.pos.app.controller.PublicController;
 import com.pos.app.model.request.ReqCreateOrderViaQrCode;
+import com.pos.app.model.request.ReqNotificationMidTrans;
 import com.pos.app.model.response.BaseResponse;
 import com.pos.app.service.MasterDataService;
 import com.pos.app.service.OrderService;
+import com.pos.app.service.PaymentService;
 import com.pos.app.utils.ResponseHelper;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -17,6 +19,7 @@ public class PublicControllerImpl implements PublicController {
 
     private final MasterDataService masterDataService;
     private final OrderService orderService;
+    private final PaymentService paymentService;
 
     @Override
     public BaseResponse getProductPublic(String code) {
@@ -52,6 +55,13 @@ public class PublicControllerImpl implements PublicController {
     @Override
     public BaseResponse getListSubscriptionPackagePublic() {
         return ResponseHelper.createBaseResponse(masterDataService.getListSubscriptionPackagePublic());
+    }
+
+    @Override
+    public BaseResponse postNotificationFromMidTrans(ReqNotificationMidTrans req) {
+
+        return ResponseHelper.createBaseResponse(paymentService.postNotificationFromMidTrans(req));
+
     }
 
 

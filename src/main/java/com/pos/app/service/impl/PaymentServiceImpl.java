@@ -106,9 +106,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public ReqNotificationMidTrans postNotificationFromMidTrans(ReqNotificationMidTrans req) {
         Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
+
         if (findOrder.isEmpty()) {
             throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
         }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime localDateTime = LocalDateTime.parse(req.getTransactionTime(), formatter);
         long unixTime = localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond();
