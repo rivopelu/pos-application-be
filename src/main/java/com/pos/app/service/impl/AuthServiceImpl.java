@@ -10,6 +10,7 @@ import com.pos.app.model.request.ReqSignUp;
 import com.pos.app.model.request.RequestSignIn;
 import com.pos.app.model.response.ResponseSignIn;
 import com.pos.app.repositories.AccountRepository;
+import com.pos.app.repositories.ClientRepository;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.AuthService;
 import com.pos.app.service.JwtService;
@@ -36,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AccountService accountService;
     private final JwtService jwtService;
+    private final ClientRepository clientRepository;
 
     @Override
     public ResponseSignIn signInStaff(RequestSignIn req) {
@@ -100,6 +102,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException(ResponseEnum.USERNAME_ALREADY_EXIST.name());
         }
 
+
         String encode = passwordEncoder.encode(req.getPassword());
         Account account = Account.builder()
                 .email(req.getEmail())
@@ -108,7 +111,22 @@ public class AuthServiceImpl implements AuthService {
                 .role(UserRole.ADMIN)
                 .avatar(accountService.createAvatar(req.getName()))
                 .password(encode)
+                .createdBy("SYSTEM")
                 .build();
+
+        account = accountRepository.save(account);
+
+        Client client = Client.builder()
+                .name(req.getBusinessName())
+                .note(req.getBusinessAddress())
+                .createdBy(account.getId())
+                .isActiveSubscription(false)
+                .build();
+
+        clientRepository.save(client);
+        account.setCreatedBy(account.getId());
+
+
         try {
             accountRepository.save(account);
             return ResponseEnum.SUCCESS;

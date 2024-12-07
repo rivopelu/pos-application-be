@@ -51,10 +51,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         SubscriptionOrder buildOrder = SubscriptionOrder.builder().account(account).client(client).subscriptionPackage(findPackage.get()).status(SubscriptionOrderStatusEnum.CREATED).totalTransaction(findPackage.get().getPrice()).build();
         EntityUtils.created(buildOrder, account.getId());
-
         SubscriptionOrder order = subscriptionOrderRepository.save(buildOrder);
-
-
         ReqPaymentObject paymentRequest = ReqPaymentObject.builder().transactionDetail(generateTransactionDetail(order)).customersDetails(generateCustomerDetail(account)).itemsDetail(generateItemsDetail(findPackage.get())).build();
 
         try {

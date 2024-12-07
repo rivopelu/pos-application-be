@@ -20,4 +20,6 @@ public class ReqSignUp {
     private String email;
     private String password;
     private String name;
+    private String businessName;
+    private String businessAddress;
 }
