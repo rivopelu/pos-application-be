@@ -1,10 +1,10 @@
 package com.pos.app.service.impl;
 
-import com.pos.app.constants.UrlSting;
+import com.pos.app.entities.Client;
 import com.pos.app.entities.SubscriptionOrder;
 import com.pos.app.entities.TransactionNotificationSubscription;
 import com.pos.app.enums.ResponseEnum;
-import com.pos.app.exception.NotFoundException;
+import com.pos.app.enums.SubscriptionOrderStatusEnum;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqNotificationMidTrans;
 import com.pos.app.model.request.ReqPaymentObject;
@@ -14,6 +14,7 @@ import com.pos.app.repositories.SubscriptionOrderRepository;
 import com.pos.app.repositories.TransactionNotificationSubscriptionRepository;
 import com.pos.app.service.PaymentService;
 import com.pos.app.utils.EntityUtils;
+import com.pos.app.utils.UtilsHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -104,16 +105,26 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ReqNotificationMidTrans postNotificationFromMidTrans(ReqNotificationMidTrans req) {
-        Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
-        SubscriptionOrder subscriptionOrder = null;
-        if (findOrder.isPresent()) {
-            subscriptionOrder = findOrder.get();
-        }
+    public ResponseEnum postNotificationFromMidTrans(ReqNotificationMidTrans req) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime localDateTime = LocalDateTime.parse(req.getTransactionTime(), formatter);
         long unixTime = localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+        Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
+        SubscriptionOrder subscriptionOrder = null;
+        if (findOrder.isPresent()) {
+            subscriptionOrder = findOrder.get();
+
+            if (req.getTransactionStatus().equals("settlement")) {
+                Client client = subscriptionOrder.getClient();
+                BigInteger subscriptionDurationPerDay = subscriptionOrder.getSubscriptionPackage().getDurationPerDay();
+                Long durationSubscription = UtilsHelper.addDaysUnixTime(unixTime, subscriptionDurationPerDay);
+                subscriptionOrder.setStatus(SubscriptionOrderStatusEnum.SUCCESS);
+                client.setIsActiveSubscription(true);
+                client.setSubscriptionExpiredDate(durationSubscription);
+            }
+        }
+
         TransactionNotificationSubscription detail = TransactionNotificationSubscription.builder()
                 .transactionTime(unixTime)
                 .transactionStatus(req.getTransactionStatus())
@@ -137,11 +148,12 @@ public class PaymentServiceImpl implements PaymentService {
                 .subscriptionOrder(subscriptionOrder)
                 .build();
 
+
         EntityUtils.created(detail, "MID_TRANS");
 
         try {
             transactionNotificationSubscriptionRepository.save(detail);
-            return req;
+            return ResponseEnum.SUCCESS;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

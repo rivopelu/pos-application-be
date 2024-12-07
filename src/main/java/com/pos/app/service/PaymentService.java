@@ -1,5 +1,6 @@
 package com.pos.app.service;
 
+import com.pos.app.enums.ResponseEnum;
 import com.pos.app.model.request.ReqNotificationMidTrans;
 import com.pos.app.model.request.ReqPaymentObject;
 import com.pos.app.model.request.RequestTestingPayment;
@@ -9,5 +10,5 @@ public interface PaymentService {
     SnapPaymentResponse testingPayment(RequestTestingPayment req);
     SnapPaymentResponse createPayment(ReqPaymentObject req);
 
-    ReqNotificationMidTrans postNotificationFromMidTrans(ReqNotificationMidTrans req);
+    ResponseEnum postNotificationFromMidTrans(ReqNotificationMidTrans req);
 }

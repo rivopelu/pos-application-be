@@ -40,4 +40,8 @@ public class UtilsHelper {
         return ZonedDateTime.now(ZoneId.of("Asia/Jakarta")).toLocalDate();
     }
 
+    public static Long addDaysUnixTime(Long currentDate, BigInteger durationDay) {
+        return currentDate + (7 * 24 * 60 * 60);
+    }
+
 }
