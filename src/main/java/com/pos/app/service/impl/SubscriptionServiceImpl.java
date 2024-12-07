@@ -11,6 +11,7 @@ import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqPaymentObject;
 import com.pos.app.model.request.ReqPaymentSubscription;
 import com.pos.app.model.response.ResponsePaymentToken;
+import com.pos.app.model.response.ResponseSubscriptionList;
 import com.pos.app.model.response.SnapPaymentResponse;
 import com.pos.app.repositories.SubscriptionOrderRepository;
 import com.pos.app.repositories.SubscriptionPackageRepository;
@@ -19,9 +20,15 @@ import com.pos.app.service.PaymentService;
 import com.pos.app.service.SubscriptionService;
 import com.pos.app.utils.EntityUtils;
 import lombok.RequiredArgsConstructor;
+import okhttp3.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,6 +63,27 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         try {
             return paymentService.createPayment(paymentRequest);
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public Page<ResponseSubscriptionList> getSubscriptionList(Pageable pageable) {
+        String clientId = accountService.getCurrentClientIdOrNull();
+        Page<SubscriptionOrder> subscriptionOrderPage = subscriptionOrderRepository.findAllByClientIdOrderByCreatedDateDesc(pageable, clientId);
+        List<ResponseSubscriptionList> response = new ArrayList<>();
+        try {
+            for (SubscriptionOrder subscriptionOrder : subscriptionOrderPage.getContent()) {
+                ResponseSubscriptionList responseSubscriptionList = ResponseSubscriptionList.builder()
+                        .createdDate(subscriptionOrder.getCreatedDate())
+                        .id(subscriptionOrder.getId())
+                        .status(subscriptionOrder.getStatus())
+                        .totalTransaction(subscriptionOrder.getTotalTransaction())
+                        .build();
+                response.add(responseSubscriptionList);
+            }
+            return new PageImpl<>(response, pageable, subscriptionOrderPage.getTotalElements());
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

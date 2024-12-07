@@ -17,6 +17,7 @@ import java.math.BigInteger;
 public class SubscriptionOrder extends BaseEntity {
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private SubscriptionOrderStatusEnum status;
 
     @Column(name = "total_transaction")
