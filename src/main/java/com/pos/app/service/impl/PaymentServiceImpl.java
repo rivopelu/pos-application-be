@@ -105,11 +105,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ReqNotificationMidTrans postNotificationFromMidTrans(ReqNotificationMidTrans req) {
-//        Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
-
-//        if (findOrder.isEmpty()) {
-//            throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
-//        }
+        Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
+        SubscriptionOrder subscriptionOrder = null;
+        if (findOrder.isPresent()) {
+            subscriptionOrder = findOrder.get();
+        }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime localDateTime = LocalDateTime.parse(req.getTransactionTime(), formatter);
@@ -134,7 +134,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .cardType(req.getCardType())
                 .bank(req.getBank())
                 .approvalCode(req.getApprovalCode())
-//                .subscriptionOrder(findOrder.get())
+                .subscriptionOrder(subscriptionOrder)
                 .build();
 
         EntityUtils.created(detail, "MID_TRANS");
