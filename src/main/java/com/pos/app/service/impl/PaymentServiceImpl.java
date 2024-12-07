@@ -1,11 +1,20 @@
 package com.pos.app.service.impl;
 
 import com.pos.app.constants.UrlSting;
+import com.pos.app.entities.SubscriptionOrder;
+import com.pos.app.entities.TransactionNotificationSubscription;
+import com.pos.app.enums.ResponseEnum;
+import com.pos.app.exception.NotFoundException;
 import com.pos.app.exception.SystemErrorException;
+import com.pos.app.model.request.ReqNotificationMidTrans;
 import com.pos.app.model.request.ReqPaymentObject;
 import com.pos.app.model.request.RequestTestingPayment;
 import com.pos.app.model.response.SnapPaymentResponse;
+import com.pos.app.repositories.SubscriptionOrderRepository;
+import com.pos.app.repositories.TransactionNotificationSubscriptionRepository;
 import com.pos.app.service.PaymentService;
+import com.pos.app.utils.EntityUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,12 +24,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.pos.app.constants.UrlSting.GET_PAYMENT_SNAP_MID_TRANS_URL;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
+
+    private final SubscriptionOrderRepository subscriptionOrderRepository;
+    private final TransactionNotificationSubscriptionRepository transactionNotificationSubscriptionRepository;
 
     @Value("${mt.server-key}")
     private String mtServerKey;
@@ -48,12 +64,7 @@ public class PaymentServiceImpl implements PaymentService {
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<SnapPaymentResponse> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    requestEntity,
-                    SnapPaymentResponse.class
-            );
+            ResponseEntity<SnapPaymentResponse> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, SnapPaymentResponse.class);
 
             return response.getBody();
 
@@ -82,16 +93,53 @@ public class PaymentServiceImpl implements PaymentService {
 
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SnapPaymentResponse> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                requestEntity,
-                SnapPaymentResponse.class
-        );
+        ResponseEntity<SnapPaymentResponse> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, SnapPaymentResponse.class);
 
         try {
             return response.getBody();
 
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ReqNotificationMidTrans postNotificationFromMidTrans(ReqNotificationMidTrans req) {
+        Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
+        if (findOrder.isEmpty()) {
+            throw new NotFoundException(ResponseEnum.ORDER_NOT_FOUND.name());
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.parse(req.getTransactionTime(), formatter);
+        long unixTime = localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+        TransactionNotificationSubscription detail = TransactionNotificationSubscription.builder()
+                .transactionTime(unixTime)
+                .transactionStatus(req.getTransactionStatus())
+                .transactionId(req.getTransactionId())
+                .statusMessage(req.getStatusMessage())
+                .statusCode(req.getStatusCode())
+                .signatureKey(req.getSignatureKey())
+                .paymentType(req.getPaymentType())
+                .orderId(req.getOrderId())
+                .merchantId(req.getMerchantId())
+                .maskedCard(req.getMaskedCard())
+                .grossAmount(req.getGrossAmount())
+                .fraudStatus(req.getFraudStatus())
+                .eci(req.getEci())
+                .currency(req.getCurrency())
+                .channelResponseMessage(req.getChannelResponseMessage())
+                .channelResponseCode(req.getChannelResponseCode())
+                .cardType(req.getCardType())
+                .bank(req.getBank())
+                .approvalCode(req.getApprovalCode())
+                .subscriptionOrder(findOrder.get())
+                .build();
+
+        EntityUtils.created(detail, "MID_TRANS");
+
+        try {
+            transactionNotificationSubscriptionRepository.save(detail);
+            return req;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

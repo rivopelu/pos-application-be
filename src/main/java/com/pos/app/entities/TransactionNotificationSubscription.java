@@ -43,7 +43,7 @@ public class TransactionNotificationSubscription extends BaseEntity {
     private String maskedCard;
 
     @Column(name = "gross_amount")
-    private String grossAmount;
+    private Double grossAmount;
 
     @Column(name = "fraud_status")
     private String fraudStatus;

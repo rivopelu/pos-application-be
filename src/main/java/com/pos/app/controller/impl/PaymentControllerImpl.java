@@ -2,6 +2,7 @@ package com.pos.app.controller.impl;
 
 import com.pos.app.annotations.BaseControllerImpl;
 import com.pos.app.controller.PaymentController;
+import com.pos.app.model.request.ReqNotificationMidTrans;
 import com.pos.app.model.request.ReqPaymentSubscription;
 import com.pos.app.model.request.RequestTestingPayment;
 import com.pos.app.model.response.BaseResponse;
@@ -26,6 +27,12 @@ public class PaymentControllerImpl implements PaymentController {
     @Override
     public BaseResponse paymentSubscription(ReqPaymentSubscription req) {
         return ResponseHelper.createBaseResponse(subscriptionService.paymentSubscription(req));
+    }
+
+    @Override
+    public BaseResponse postNotificationFromMidTrans(ReqNotificationMidTrans req) {
+
+        return ResponseHelper.createBaseResponse(paymentService.postNotificationFromMidTrans(req));
     }
 
 }
