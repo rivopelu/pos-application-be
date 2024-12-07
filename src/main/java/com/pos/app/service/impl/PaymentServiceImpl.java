@@ -10,6 +10,7 @@ import com.pos.app.model.request.ReqNotificationMidTrans;
 import com.pos.app.model.request.ReqPaymentObject;
 import com.pos.app.model.request.RequestTestingPayment;
 import com.pos.app.model.response.SnapPaymentResponse;
+import com.pos.app.repositories.ClientRepository;
 import com.pos.app.repositories.SubscriptionOrderRepository;
 import com.pos.app.repositories.TransactionNotificationSubscriptionRepository;
 import com.pos.app.service.PaymentService;
@@ -38,6 +39,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final SubscriptionOrderRepository subscriptionOrderRepository;
     private final TransactionNotificationSubscriptionRepository transactionNotificationSubscriptionRepository;
+    private final ClientRepository clientRepository;
 
     @Value("${mt.server-key}")
     private String mtServerKey;
@@ -129,6 +131,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                 subscriptionOrder.setStatus(SubscriptionOrderStatusEnum.SUCCESS);
                 client.setIsActiveSubscription(true);
+                clientRepository.save(client);
             }
         }
 
