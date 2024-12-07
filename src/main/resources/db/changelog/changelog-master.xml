@@ -26,4 +26,6 @@
     <include file="classpath:db/changelog/1.5.2_add_column_is_active_subscription.xml"/>
     <include file="classpath:db/changelog/1.6.0_add_table_subscription_package.xml"/>
     <include file="classpath:db/changelog/1.6.1_add_table_subscription_order.xml"/>
+    <include file="classpath:db/changelog/1.6.2_add_table_transaction_notification_subscription.xml"/>
+    <include file="classpath:db/changelog/1.6.3_add_fk_notification_subscription_order.xml"/>
 </databaseChangeLog>
