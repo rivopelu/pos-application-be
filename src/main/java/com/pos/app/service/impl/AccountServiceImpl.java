@@ -135,6 +135,8 @@ public class AccountServiceImpl implements AccountService {
                 responseGetMe.setClientId(client.getId());
                 responseGetMe.setClientName(client.getName());
                 responseGetMe.setClientLogo(client.getLogo());
+                responseGetMe.setIsActiveSubscription(client.getIsActiveSubscription());
+                responseGetMe.setSubscriptionExpiredDate(client.getSubscriptionExpiredDate());
             }
             return responseGetMe;
         } catch (Exception e) {

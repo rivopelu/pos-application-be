@@ -21,5 +21,7 @@ public class ResponseGetMe {
     private String clientId;
     private String clientName;
     private String clientLogo;
+    private Boolean isActiveSubscription;
+    private Long subscriptionExpiredDate;
 }
 
