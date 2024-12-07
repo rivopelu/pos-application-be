@@ -124,6 +124,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         clientRepository.save(client);
+        account.setClient(client);
         account.setCreatedBy(account.getId());
 
 
