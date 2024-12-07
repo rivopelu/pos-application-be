@@ -114,17 +114,21 @@ public class PaymentServiceImpl implements PaymentService {
         if (findOrder.isPresent()) {
             subscriptionOrder = findOrder.get();
 
-            if (req.getTransactionStatus().equals("settlement")) {
-                Long currentExpiredDate = 0L;
+            if ("settlement".equals(req.getTransactionStatus())) {
                 Client client = subscriptionOrder.getClient();
                 BigInteger subscriptionDurationPerDay = subscriptionOrder.getSubscriptionPackage().getDurationPerDay();
-                Long durationSubscription = UtilsHelper.addDaysUnixTime(new Date().getTime(), subscriptionDurationPerDay);
+
+                Long additionalDuration = UtilsHelper.addDaysUnixTime(0L, subscriptionDurationPerDay);
+
+                Long currentExpiredDate = client.getSubscriptionExpiredDate() != null
+                        ? client.getSubscriptionExpiredDate()
+                        : new Date().getTime() / 1000;
+
+                Long newExpiredDate = currentExpiredDate + additionalDuration;
+                client.setSubscriptionExpiredDate(newExpiredDate);
+
                 subscriptionOrder.setStatus(SubscriptionOrderStatusEnum.SUCCESS);
                 client.setIsActiveSubscription(true);
-                if (client.getSubscriptionExpiredDate() != null) {
-                    currentExpiredDate = client.getSubscriptionExpiredDate();
-                }
-                client.setSubscriptionExpiredDate(currentExpiredDate + durationSubscription);
             }
         }
 
