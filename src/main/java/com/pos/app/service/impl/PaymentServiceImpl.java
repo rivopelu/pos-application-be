@@ -107,11 +107,10 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public ResponseEnum postNotificationFromMidTrans(ReqNotificationMidTrans req) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime localDateTime = LocalDateTime.parse(req.getTransactionTime(), formatter);
-        long unixTime = localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+
         Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
         SubscriptionOrder subscriptionOrder = null;
+
         if (findOrder.isPresent()) {
             subscriptionOrder = findOrder.get();
 
@@ -119,7 +118,7 @@ public class PaymentServiceImpl implements PaymentService {
                 Long currentExpiredDate = 0L;
                 Client client = subscriptionOrder.getClient();
                 BigInteger subscriptionDurationPerDay = subscriptionOrder.getSubscriptionPackage().getDurationPerDay();
-                Long durationSubscription = UtilsHelper.addDaysUnixTime(unixTime, subscriptionDurationPerDay);
+                Long durationSubscription = UtilsHelper.addDaysUnixTime(new Date().getTime(), subscriptionDurationPerDay);
                 subscriptionOrder.setStatus(SubscriptionOrderStatusEnum.SUCCESS);
                 client.setIsActiveSubscription(true);
                 if (client.getSubscriptionExpiredDate() != null) {
