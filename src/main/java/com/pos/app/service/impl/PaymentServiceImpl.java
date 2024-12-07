@@ -129,7 +129,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         TransactionNotificationSubscription detail = TransactionNotificationSubscription.builder()
-                .transactionTime(unixTime)
+                .transactionTime(new Date().getTime())
                 .transactionStatus(req.getTransactionStatus())
                 .transactionId(req.getTransactionId())
                 .statusMessage(req.getStatusMessage())
