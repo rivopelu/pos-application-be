@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.pos.app.enums.SubscriptionOrderStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
 
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

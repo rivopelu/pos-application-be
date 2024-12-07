@@ -74,12 +74,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Page<SubscriptionOrder> subscriptionOrderPage = subscriptionOrderRepository.findAllByClientIdOrderByCreatedDateDesc(pageable, clientId);
         List<ResponseSubscriptionList> response = new ArrayList<>();
         try {
-            for (SubscriptionOrder subscriptionOrder : subscriptionOrderPage.getContent()) {
+            for (SubscriptionOrder order : subscriptionOrderPage.getContent()) {
                 ResponseSubscriptionList responseSubscriptionList = ResponseSubscriptionList.builder()
-                        .createdDate(subscriptionOrder.getCreatedDate())
-                        .id(subscriptionOrder.getId())
-                        .status(subscriptionOrder.getStatus())
-                        .totalTransaction(subscriptionOrder.getTotalTransaction())
+                        .createdDate(order.getCreatedDate())
+                        .id(order.getId())
+                        .status(order.getStatus())
+                        .totalTransaction(order.getTotalTransaction())
                         .build();
                 response.add(responseSubscriptionList);
             }
