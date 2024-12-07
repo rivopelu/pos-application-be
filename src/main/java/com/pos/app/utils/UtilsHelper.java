@@ -41,8 +41,9 @@ public class UtilsHelper {
     }
 
     public static Long addDaysUnixTime(Long currentDate, BigInteger durationDay) {
-        int durationValue = durationDay.intValue();
-        return currentDate + ((long) durationValue * 24 * 60 * 60);
+        long durationValue = durationDay.longValue();
+        long durationInSeconds = durationValue * 24 * 60 * 60;
+        return currentDate + durationInSeconds;
     }
 
 }
