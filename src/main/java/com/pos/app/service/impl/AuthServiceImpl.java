@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException(ResponseEnum.SUBSCRIPTION_EXPIRED.name());
         }
 
-        if (client.getSubscriptionExpiredDate() > new Date().getTime()) {
+        if (client.getSubscriptionExpiredDate() < new Date().getTime()) {
             throw new BadRequestException(ResponseEnum.SUBSCRIPTION_EXPIRED.name());
         }
 
