@@ -76,6 +76,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 ResponseSubscriptionList responseSubscriptionList = ResponseSubscriptionList.builder()
                         .createdDate(order.getCreatedDate())
                         .id(order.getId())
+                        .durationPerDay(order.getSubscriptionPackage().getDurationPerDay())
                         .status(order.getStatus())
                         .totalTransaction(order.getTotalTransaction())
                         .build();

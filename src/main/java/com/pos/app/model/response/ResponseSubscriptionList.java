@@ -21,5 +21,6 @@ public class ResponseSubscriptionList {
     private String id;
     private SubscriptionOrderStatusEnum status;
     private BigInteger totalTransaction;
+    private BigInteger durationPerDay;
     private Long createdDate;
 }
