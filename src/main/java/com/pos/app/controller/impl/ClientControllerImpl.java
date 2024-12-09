@@ -23,4 +23,10 @@ public class ClientControllerImpl implements ClientController {
     public BaseResponse createClientByUser(ReqCreateClient req) {
         return ResponseHelper.createBaseResponse(clientService.createClientByUser(req));
     }
+
+    @Override
+    public BaseResponse editClient(ReqCreateClient req) {
+
+        return  ResponseHelper.createBaseResponse(clientService.editClient(req));
+    }
 }

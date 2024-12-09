@@ -7,4 +7,6 @@ public interface ClientService {
     ResponseEnum createClient(ReqCreateClient req);
 
     ResponseEnum createClientByUser(ReqCreateClient req);
+
+    ResponseEnum editClient(ReqCreateClient req);
 }

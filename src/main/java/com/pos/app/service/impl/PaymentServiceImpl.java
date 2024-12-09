@@ -108,8 +108,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ResponseEnum postNotificationFromMidTrans(ReqNotificationMidTrans req) {
-
-
+        
         Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
         SubscriptionOrder subscriptionOrder = null;
 

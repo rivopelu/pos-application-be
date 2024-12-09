@@ -53,4 +53,23 @@ public class ClientServiceImpl implements ClientService {
             throw new SystemErrorException(e);
         }
     }
+
+    @Override
+    public ResponseEnum editClient(ReqCreateClient req) {
+        String clientId = accountService.getCurrentClientIdOrNull();
+        Optional<Client> findClient = clientRepository.findById(clientId);
+        if (findClient.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.CLIENT_NOT_FOUND.name());
+        }
+        Client client = findClient.get();
+        try {
+            client.setName(req.getName());
+            client.setLogo(req.getLogo());
+            client.setNote(req.getNote());
+            clientRepository.save(client);
+            return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
 }
