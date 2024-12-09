@@ -125,6 +125,7 @@ public class AccountServiceImpl implements AccountService {
             Account account = getCurrentAccount();
             ResponseGetMe responseGetMe = ResponseGetMe.builder()
                     .name(account.getName())
+                    .email(account.getEmail())
                     .username(account.getUsername())
                     .avatar(account.getAvatar())
                     .build();
