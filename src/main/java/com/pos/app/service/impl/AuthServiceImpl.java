@@ -118,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
 
         Client client = Client.builder()
                 .name(req.getBusinessName())
-                .note(req.getBusinessAddress())
+                .address(req.getBusinessAddress())
                 .createdBy(account.getId())
                 .isActiveSubscription(false)
                 .build();

@@ -24,8 +24,8 @@ public class Client {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "note")
-    private String note;
+    @Column(name = "address")
+    private String address;
 
     @Column(name = "logo")
     private String logo;

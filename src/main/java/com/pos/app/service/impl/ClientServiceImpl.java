@@ -26,7 +26,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ResponseEnum createClient(ReqCreateClient req) {
         try {
-            Client client = Client.builder().name(req.getName()).logo(req.getLogo()).note(req.getNote()).createdBy(accountService.getCurrentAccountId()).build();
+            Client client = Client.builder().name(req.getName()).logo(req.getLogo()).address(req.getNote()).createdBy(accountService.getCurrentAccountId()).build();
             clientRepository.save(client);
             return ResponseEnum.SUCCESS;
         } catch (Exception e) {
@@ -37,7 +37,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ResponseEnum createClientByUser(ReqCreateClient req) {
         try {
-            Client client = Client.builder().name(req.getName()).logo(req.getLogo()).note(req.getNote()).createdBy(accountService.getCurrentAccountId()).build();
+            Client client = Client.builder().name(req.getName()).logo(req.getLogo()).address(req.getNote()).createdBy(accountService.getCurrentAccountId()).build();
             Client clientSave = clientRepository.save(client);
             Account getAccount = accountService.getCurrentAccount();
             Optional<Account> findAccount = accountRepository.findById(getAccount.getId());
@@ -65,7 +65,7 @@ public class ClientServiceImpl implements ClientService {
         try {
             client.setName(req.getName());
             client.setLogo(req.getLogo());
-            client.setNote(req.getNote());
+            client.setAddress(req.getNote());
             clientRepository.save(client);
             return ResponseEnum.SUCCESS;
         } catch (Exception e) {
