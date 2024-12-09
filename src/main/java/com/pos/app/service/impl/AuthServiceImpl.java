@@ -116,6 +116,7 @@ public class AuthServiceImpl implements AuthService {
 
         account = accountRepository.save(account);
 
+
         Client client = Client.builder()
                 .name(req.getBusinessName())
                 .address(req.getBusinessAddress())
