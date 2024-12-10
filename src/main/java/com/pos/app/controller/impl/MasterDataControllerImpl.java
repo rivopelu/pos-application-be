@@ -46,7 +46,17 @@ public class MasterDataControllerImpl implements MasterDataController {
     }
 
     @Override
+    public BaseResponse editMerchant(ReqCreateMerchant req, String id) {
+        return ResponseHelper.createBaseResponse(masterDataService.editMerchant(req, id));
+    }
+
+    @Override
     public BaseResponse getListClientMerchant() {
         return ResponseHelper.createBaseResponse(masterDataService.getListClientMerchant());
+    }
+
+    @Override
+    public BaseResponse deleteMerchant(String id) {
+        return ResponseHelper.createBaseResponse(masterDataService.deleteMerchant(id));
     }
 }

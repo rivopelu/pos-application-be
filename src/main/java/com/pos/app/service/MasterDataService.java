@@ -29,4 +29,8 @@ public interface MasterDataService {
     ResponseEnum createMerchant(ReqCreateMerchant req);
 
     List<ResponseListMerchant> getListClientMerchant();
+
+    ResponseEnum editMerchant(ReqCreateMerchant req, String id);
+
+    ResponseEnum deleteMerchant(String id);
 }

@@ -13,10 +13,12 @@ import com.pos.app.repositories.*;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.MasterDataService;
 import com.pos.app.utils.EntityUtils;
+import com.pos.app.utils.ResponseHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -206,6 +208,44 @@ public class MasterDataServiceImpl implements MasterDataService {
         }
         try {
             return responseListMerchants;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseEnum editMerchant(ReqCreateMerchant req, String id) {
+
+        Optional<Merchant> findMerchant = merchantRepository.findByIdAndActiveIsTrue(id);
+        if (findMerchant.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.MERCHANT_NOT_FOUND.name());
+        }
+        Merchant merchant = findMerchant.get();
+        try {
+            merchant.setName(req.getMerchantName());
+            merchant.setAddress(req.getAddress());
+            merchant.setNote(req.getNote());
+            merchant.setAddress(req.getAddress());
+            merchantRepository.save(merchant);
+            return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseEnum deleteMerchant(String id) {
+
+        Optional<Merchant> findMerchant = merchantRepository.findByIdAndActiveIsTrue(id);
+        if (findMerchant.isEmpty()) {
+            throw new BadRequestException(ResponseEnum.MERCHANT_NOT_FOUND.name());
+        }
+        try {
+            findMerchant.get().setActive(false);
+            findMerchant.get().setDeletedBy(accountService.getCurrentAccountId());
+            findMerchant.get().setDeletedDate(new Date().getTime());
+            merchantRepository.save(findMerchant.get());
+            return ResponseEnum.SUCCESS;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
