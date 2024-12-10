@@ -38,4 +38,9 @@ public class MasterDataControllerImpl implements MasterDataController {
 
         return ResponseHelper.createBaseResponse(masterDataService.createSubscriptionPackage(req));
     }
+
+    @Override
+    public BaseResponse createMerchant() {
+        return null;
+    }
 }

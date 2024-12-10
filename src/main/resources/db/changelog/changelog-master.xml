@@ -30,4 +30,5 @@
     <include file="classpath:db/changelog/1.6.3_add_fk_notification_subscription_order.xml"/>
     <include file="classpath:db/changelog/1.6.4_rename_column_note_to_address.xml"/>
     <include file="classpath:db/changelog/1.7.0_add_table_merchant_and_customer_table.xml"/>
+    <include file="classpath:db/changelog/1.7.1_add_column_total_table_merchant.xml"/>
 </databaseChangeLog>

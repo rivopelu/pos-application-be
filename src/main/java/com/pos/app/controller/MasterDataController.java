@@ -27,5 +27,8 @@ public interface MasterDataController {
     @PostMapping("v1/subscription-package/create")
     BaseResponse createSubscriptionPackage(@RequestBody List<ReqCreateSubscriptionPackage> req);
 
+    @PostMapping("v1/merchant/new")
+    BaseResponse createMerchant();
+
 
 }

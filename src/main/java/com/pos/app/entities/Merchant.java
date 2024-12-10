@@ -19,11 +19,12 @@ public class Merchant extends BaseEntity {
     @Column(name = "note")
     private String note;
 
+    @Column(name = "total_table")
+    private int totalTable;
+
     @JoinColumn(name = "client_id")
     @ManyToOne
     private Client client;
-
-
 
 
 }
