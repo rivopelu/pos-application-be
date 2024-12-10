@@ -19,7 +19,10 @@ import lombok.NoArgsConstructor;
 public class RequestCreateAccount {
     private String username;
     private String name;
+    private String email;
     private String password;
+    private String avatar;
     private UserRole role;
     private String clientId;
+    private String merchantId;
 }

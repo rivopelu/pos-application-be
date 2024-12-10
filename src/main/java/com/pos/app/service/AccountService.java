@@ -38,4 +38,6 @@ public interface AccountService {
     ResponseEnum changePassword(ReqChangePassword req);
 
     ResponseEnum inActiveAccount(String id);
+
+    ResponseEnum editAccount(RequestCreateAccount request);
 }

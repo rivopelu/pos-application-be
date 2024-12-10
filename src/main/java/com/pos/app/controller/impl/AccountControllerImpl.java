@@ -52,4 +52,10 @@ public class AccountControllerImpl implements AccountController {
 
         return  ResponseHelper.createBaseResponse(accountService.inActiveAccount(id));
     }
+
+    @Override
+    public BaseResponse editProfile(RequestCreateAccount request) {
+
+        return  ResponseHelper.createBaseResponse(accountService.editAccount(request));
+    }
 }

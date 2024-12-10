@@ -25,5 +25,7 @@ public class ResponseGetMe {
     private Boolean isActiveSubscription;
     private Long subscriptionExpiredDate;
     private String address;
+    private String merchantName;
+    private String merchantId;
 }
 

@@ -2,6 +2,7 @@ package com.pos.app.service.impl;
 
 import com.pos.app.entities.Account;
 import com.pos.app.entities.Client;
+import com.pos.app.entities.Merchant;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.enums.UserRole;
 import com.pos.app.exception.BadRequestException;
@@ -14,6 +15,7 @@ import com.pos.app.model.response.ResponseListAccount;
 import com.pos.app.model.response.ResponsePasswordCreateAccount;
 import com.pos.app.repositories.AccountRepository;
 import com.pos.app.repositories.ClientRepository;
+import com.pos.app.repositories.MerchantRepository;
 import com.pos.app.service.AccountService;
 import com.pos.app.utils.AuthConstant;
 import com.pos.app.utils.UtilsHelper;
@@ -26,10 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -40,6 +39,7 @@ public class AccountServiceImpl implements AccountService {
     private final HttpServletRequest httpServletRequest;
     private final ClientRepository clientRepository;
     private final AuthenticationManager authenticationManager;
+    private final MerchantRepository merchantRepository;
 
     @Override
     public String createNewAccount(RequestCreateAccount req) {
@@ -129,6 +129,12 @@ public class AccountServiceImpl implements AccountService {
                     .username(account.getUsername())
                     .avatar(account.getAvatar())
                     .build();
+
+            if (account.getMerchant() != null) {
+                Merchant merchant = account.getMerchant();
+                responseGetMe.setMerchantId(merchant.getId());
+                responseGetMe.setMerchantName(merchant.getName());
+            }
 
 
             if (account.getClient() != null) {
@@ -268,5 +274,41 @@ public class AccountServiceImpl implements AccountService {
             throw new SystemErrorException(e);
         }
 
+    }
+
+    @Override
+    public ResponseEnum editAccount(RequestCreateAccount request) {
+        Account currentAccount = getCurrentAccount();
+
+        Merchant merchant = null;
+        if (request.getMerchantId() != null) {
+            merchant = merchantRepository.findByIdAndActiveIsTrue(request.getMerchantId())
+                    .orElseThrow(() -> new NotFoundException(ResponseEnum.MERCHANT_NOT_FOUND.name()));
+        }
+
+        if (request.getName() != null) {
+            currentAccount.setName(request.getName());
+        }
+        if (request.getEmail() != null) {
+            currentAccount.setEmail(request.getEmail());
+        }
+        if (merchant != null) {
+            currentAccount.setMerchant(merchant);
+        }
+        if (request.getAvatar() != null) {
+            currentAccount.setAvatar(request.getAvatar());
+        }
+        if (request.getUsername() != null) {
+            currentAccount.setUsername(request.getUsername());
+        }
+        try {
+            currentAccount.setUpdatedDate(new Date().getTime());
+
+            accountRepository.save(currentAccount);
+            return ResponseEnum.SUCCESS;
+
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
     }
 }

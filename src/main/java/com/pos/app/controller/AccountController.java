@@ -31,4 +31,7 @@ public interface AccountController {
     @PatchMapping("v1/inactive-account/{id}")
     BaseResponse inactiveAccount(@PathVariable String id);
 
+    @PutMapping("v1/edit/profile")
+    BaseResponse editProfile(@RequestBody RequestCreateAccount request);
+
 }
