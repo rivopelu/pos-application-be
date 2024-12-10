@@ -32,4 +32,8 @@ public interface MasterDataController {
     BaseResponse createMerchant(@RequestBody ReqCreateMerchant req);
 
 
+    @GetMapping("v1/merchant/list")
+    BaseResponse getListClientMerchant();
+
+
 }

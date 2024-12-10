@@ -8,10 +8,7 @@ import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateCategory;
 import com.pos.app.model.request.ReqCreateMerchant;
 import com.pos.app.model.request.ReqCreateSubscriptionPackage;
-import com.pos.app.model.response.ResListCategory;
-import com.pos.app.model.response.ResListProduct;
-import com.pos.app.model.response.ResponseListAccount;
-import com.pos.app.model.response.ResponseListSubscriptionPackage;
+import com.pos.app.model.response.*;
 import com.pos.app.repositories.*;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.MasterDataService;
@@ -187,6 +184,28 @@ public class MasterDataServiceImpl implements MasterDataService {
             EntityUtils.created(merchant, accountId);
             merchantRepository.save(merchant);
             return ResponseEnum.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public List<ResponseListMerchant> getListClientMerchant() {
+        String clientId = accountService.getCurrentClientIdOrNull();
+        List<ResponseListMerchant> responseListMerchants = new ArrayList<>();
+        List<Merchant> listMerchants = merchantRepository.findAllByClientIdAndActiveIsTrue(clientId);
+        for (Merchant merchant : listMerchants) {
+            ResponseListMerchant responseListMerchant = ResponseListMerchant.builder()
+                    .address(merchant.getAddress())
+                    .name(merchant.getName())
+                    .id(merchant.getId())
+                    .totalTable(merchant.getTotalTable())
+                    .note(merchant.getNote())
+                    .build();
+            responseListMerchants.add(responseListMerchant);
+        }
+        try {
+            return responseListMerchants;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

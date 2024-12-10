@@ -6,6 +6,7 @@ import com.pos.app.model.request.ReqCreateMerchant;
 import com.pos.app.model.request.ReqCreateSubscriptionPackage;
 import com.pos.app.model.response.ResListCategory;
 import com.pos.app.model.response.ResListProduct;
+import com.pos.app.model.response.ResponseListMerchant;
 import com.pos.app.model.response.ResponseListSubscriptionPackage;
 
 import java.util.List;
@@ -26,4 +27,6 @@ public interface MasterDataService {
     List<ResponseListSubscriptionPackage> getListSubscriptionPackagePublic();
 
     ResponseEnum createMerchant(ReqCreateMerchant req);
+
+    List<ResponseListMerchant> getListClientMerchant();
 }

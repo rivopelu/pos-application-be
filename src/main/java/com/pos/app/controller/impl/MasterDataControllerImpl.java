@@ -44,4 +44,9 @@ public class MasterDataControllerImpl implements MasterDataController {
     public BaseResponse createMerchant(ReqCreateMerchant req) {
         return ResponseHelper.createBaseResponse(masterDataService.createMerchant(req));
     }
+
+    @Override
+    public BaseResponse getListClientMerchant() {
+        return ResponseHelper.createBaseResponse(masterDataService.getListClientMerchant());
+    }
 }
