@@ -3,6 +3,7 @@ package com.pos.app.controller.impl;
 import com.pos.app.annotations.BaseControllerImpl;
 import com.pos.app.controller.MasterDataController;
 import com.pos.app.model.request.ReqCreateCategory;
+import com.pos.app.model.request.ReqCreateMerchant;
 import com.pos.app.model.request.ReqCreateSubscriptionPackage;
 import com.pos.app.model.response.BaseResponse;
 import com.pos.app.service.MasterDataService;
@@ -40,7 +41,7 @@ public class MasterDataControllerImpl implements MasterDataController {
     }
 
     @Override
-    public BaseResponse createMerchant() {
-        return null;
+    public BaseResponse createMerchant(ReqCreateMerchant req) {
+        return ResponseHelper.createBaseResponse(masterDataService.createMerchant(req));
     }
 }

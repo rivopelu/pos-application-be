@@ -1,23 +1,18 @@
 package com.pos.app.service.impl;
 
 import com.github.javafaker.Cat;
-import com.pos.app.entities.Category;
-import com.pos.app.entities.Product;
-import com.pos.app.entities.QrCode;
-import com.pos.app.entities.SubscriptionPackage;
+import com.pos.app.entities.*;
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.exception.BadRequestException;
 import com.pos.app.exception.SystemErrorException;
 import com.pos.app.model.request.ReqCreateCategory;
+import com.pos.app.model.request.ReqCreateMerchant;
 import com.pos.app.model.request.ReqCreateSubscriptionPackage;
 import com.pos.app.model.response.ResListCategory;
 import com.pos.app.model.response.ResListProduct;
 import com.pos.app.model.response.ResponseListAccount;
 import com.pos.app.model.response.ResponseListSubscriptionPackage;
-import com.pos.app.repositories.CategoryRepository;
-import com.pos.app.repositories.ProductRepository;
-import com.pos.app.repositories.QrCodeRepository;
-import com.pos.app.repositories.SubscriptionPackageRepository;
+import com.pos.app.repositories.*;
 import com.pos.app.service.AccountService;
 import com.pos.app.service.MasterDataService;
 import com.pos.app.utils.EntityUtils;
@@ -37,6 +32,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private final ProductRepository productRepository;
     private final QrCodeRepository qrCodeRepository;
     private final SubscriptionPackageRepository subscriptionPackageRepository;
+    private final MerchantRepository merchantRepository;
 
     @Override
     public ResponseEnum createCategory(List<ReqCreateCategory> req) {
@@ -168,6 +164,29 @@ public class MasterDataServiceImpl implements MasterDataService {
             }
             return responseList;
 
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseEnum createMerchant(ReqCreateMerchant req) {
+        Account account = accountService.getCurrentAccount();
+        Client client = account.getClient();
+        String accountId = account.getId();
+
+
+        try {
+            Merchant merchant = Merchant.builder()
+                    .name(req.getMerchantName())
+                    .address(req.getAddress())
+                    .note(req.getNote())
+                    .client(client)
+                    .totalTable(req.getTotalTable())
+                    .build();
+            EntityUtils.created(merchant, accountId);
+            merchantRepository.save(merchant);
+            return ResponseEnum.SUCCESS;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

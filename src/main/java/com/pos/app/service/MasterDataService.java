@@ -2,6 +2,7 @@ package com.pos.app.service;
 
 import com.pos.app.enums.ResponseEnum;
 import com.pos.app.model.request.ReqCreateCategory;
+import com.pos.app.model.request.ReqCreateMerchant;
 import com.pos.app.model.request.ReqCreateSubscriptionPackage;
 import com.pos.app.model.response.ResListCategory;
 import com.pos.app.model.response.ResListProduct;
@@ -23,4 +24,6 @@ public interface MasterDataService {
     ResponseEnum createSubscriptionPackage(List<ReqCreateSubscriptionPackage> req);
 
     List<ResponseListSubscriptionPackage> getListSubscriptionPackagePublic();
+
+    ResponseEnum createMerchant(ReqCreateMerchant req);
 }
