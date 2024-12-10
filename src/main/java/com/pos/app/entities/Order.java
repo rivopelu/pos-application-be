@@ -48,6 +48,10 @@ public class Order {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @JoinColumn(name = "customer_table")
+    @ManyToOne
+    private CustomerTable customerTable;
+
     @PrePersist
     public void prePersist() {
         if (this.id == null) {
