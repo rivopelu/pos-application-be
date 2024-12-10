@@ -357,7 +357,7 @@ public class OrderServiceImpl implements OrderService {
         List<ResListProduct> listProducts = new ArrayList<>();
 
         for (OrderProduct orderProduct : orderProductList) {
-            ResListProduct res  = ResListProduct.builder()
+            ResListProduct res = ResListProduct.builder()
                     .name(orderProduct.getProduct().getName())
                     .id(orderProduct.getProduct().getId())
                     .image(orderProduct.getProduct().getImage())

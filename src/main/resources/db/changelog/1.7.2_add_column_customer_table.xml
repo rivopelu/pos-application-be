@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.7.2" author="rivo pelu">
+        <addColumn tableName="order">
+            <column name="customer_table" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="order" baseColumnNames="customer_table"
+                                 constraintName="customer_table_order_fk"
+                                 referencedTableName="customer_table"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
