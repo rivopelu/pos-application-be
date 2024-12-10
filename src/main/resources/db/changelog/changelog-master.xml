@@ -32,4 +32,6 @@
     <include file="classpath:db/changelog/1.7.0_add_table_merchant_and_customer_table.xml"/>
     <include file="classpath:db/changelog/1.7.1_add_column_total_table_merchant.xml"/>
     <include file="classpath:db/changelog/1.7.2_add_column_customer_table.xml"/>
+    <include file="classpath:db/changelog/1.7.3_add_column_merchant_account.xml"/>
+    <include file="classpath:db/changelog/1.7.4_add_fk_account_merchant.xml"/>
 </databaseChangeLog>

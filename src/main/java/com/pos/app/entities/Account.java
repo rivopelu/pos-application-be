@@ -60,6 +60,12 @@ public class Account implements UserDetails {
     @JoinColumn(name = "client_id")
     private Client client;
 
+
+    @ManyToOne
+    @JoinColumn(name = "merchant_id")
+    private Merchant merchant;
+
+
     @Column(name = "is_inactive")
     private Boolean isInactive;
 
